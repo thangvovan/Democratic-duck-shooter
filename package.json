@@ -1,0 +1,16 @@
+{
+  "name": "lets-shoot-the-duck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LET'S SHOOT THE DUCK - a 2D arcade parody web game",
+  "type": "module",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "start": "node --env-file-if-exists=.env server.js",
+    "build": "node scripts/check.js",
+    "loadtest": "node scripts/loadtest.js"
+  }
+}
