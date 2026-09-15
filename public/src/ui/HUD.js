@@ -1,23 +1,57 @@
-// Canvas HUD: score, stage, ammo, HP, enemy ammo, boss misses, timer and combo.
+// Canvas HUD: score, stage, ammo slots, HP, enemy ammo slots, shield timer and combo.
 import { W, drawText } from '../utils/draw.js';
+import { formatTime } from '../utils/math.js';
 
 const PAD = (n) => String(Math.floor(n)).padStart(7, '0');
+const FLASH_MS = 380;
+const GRAY = { fill: '#6f6a85', tip: '#4a4560' };
 
-function bulletIcon(ctx, x, y, color = '#ffcf5a', tip = '#c98b2b') {
-  ctx.fillStyle = color;
+// Remembers previous ammo counts so a slot can "pop" when a bullet is used or loaded.
+const slotState = { ammo: { prev: null, flashes: [] }, enemy: { prev: null, flashes: [] } };
+
+function bulletIcon(ctx, x, y, colors, scale = 1, flash = 0) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = colors.fill;
   ctx.strokeStyle = '#1a1030';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.roundRect(x - 4, y - 6, 8, 16, 2);
+  ctx.roundRect(-4, -6, 8, 16, 2);
   ctx.fill();
   ctx.stroke();
-  ctx.fillStyle = tip;
+  ctx.fillStyle = colors.tip;
   ctx.beginPath();
-  ctx.moveTo(x - 4, y - 6);
-  ctx.quadraticCurveTo(x, y - 16, x + 4, y - 6);
+  ctx.moveTo(-4, -6);
+  ctx.quadraticCurveTo(0, -16, 4, -6);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(-5, -14, 10, 25);
+  }
+  ctx.restore();
+}
+
+// Always draws `slots` bullets; the first `count` are loaded, the rest are gray.
+function slotRow(ctx, key, count, slots, rightX, y, colors) {
+  const state = slotState[key];
+  const now = performance.now();
+  if (state.prev !== null && count < state.prev) {
+    for (let i = count; i < state.prev; i++) state.flashes[i] = now;
+  }
+  state.prev = count;
+
+  const spacing = 14;
+  for (let i = 0; i < slots; i++) {
+    const x = rightX - (slots - 1 - i) * spacing;
+    const t = state.flashes[i] ? (now - state.flashes[i]) / FLASH_MS : 1;
+    const animating = t < 1;
+    bulletIcon(ctx, x, y, i < count ? colors : GRAY, animating ? 1 + (1 - t) * 0.7 : 1, animating ? 1 - t : 0);
+  }
+  return rightX - (slots - 1) * spacing - 12;
 }
 
 function heart(ctx, x, y, filled) {
@@ -36,12 +70,6 @@ function heart(ctx, x, y, filled) {
   ctx.restore();
 }
 
-function iconRow(ctx, count, rightX, y, draw, max = 10) {
-  const shown = Math.min(count, max);
-  for (let i = 0; i < shown; i++) draw(rightX - i * 13, y);
-  if (count > max) drawText(ctx, `+${count - max}`, rightX - shown * 13 - 6, y + 2, { size: 9, align: 'right' });
-}
-
 export function renderHud(ctx, hud, game) {
   ctx.save();
   ctx.fillStyle = 'rgba(20,12,40,0.78)';
@@ -54,51 +82,36 @@ export function renderHud(ctx, hud, game) {
   drawText(ctx, PAD(score), 16, 32, { size: 16, align: 'left' });
 
   drawText(ctx, hud.label, W / 2, 16, { size: 12, color: '#ffffff' });
-  if (hud.timer != null) {
-    drawText(ctx, `TIME ${Math.ceil(hud.timer)}`, W / 2, 35, {
+  if (hud.stageTime != null) {
+    drawText(ctx, `STAGE TIME ${formatTime(hud.stageTime)}`, W / 2, 35, {
       size: 10,
-      color: hud.timer <= 5 ? '#ff5a5a' : '#5ee7ff',
+      color: hud.stageTime <= 20 ? '#ff5a5a' : '#5ee7ff',
       stroke: null,
     });
   }
+  if (hud.shieldTime != null) {
+    drawText(ctx, `SHIELD BACK IN ${Math.ceil(hud.shieldTime)}`, W / 2, 64, {
+      size: 12,
+      color: hud.shieldTime <= 10 ? '#ff5a5a' : '#5ee7ff',
+    });  }
 
-  drawText(ctx, 'AMMO', W - 16, 14, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
   if (hud.ammoInfinite) {
+    drawText(ctx, 'AMMO', W - 16, 14, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
     drawText(ctx, 'UNLIMITED', W - 16, 32, { size: 11, align: 'right' });
   } else {
-    const ammo = hud.ammo ?? 0;
-    if (ammo === 0) drawText(ctx, 'EMPTY', W - 16, 32, { size: 11, color: '#ff5a5a', align: 'right' });
-    else iconRow(ctx, ammo, W - 22, 32, (x, y) => bulletIcon(ctx, x, y));
+    const labelX = slotRow(ctx, 'ammo', hud.ammo ?? 0, hud.ammoSlots, W - 22, 26, { fill: '#ffcf5a', tip: '#c98b2b' });
+    drawText(ctx, 'AMMO', labelX, 26, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
   }
 
   let rowY = 66;
   if (hud.hp != null) {
     drawText(ctx, 'HP', W - 16 - hud.maxHp * 20 - 8, rowY, { size: 10, align: 'right' });
     for (let i = 0; i < hud.maxHp; i++) heart(ctx, W - 26 - (hud.maxHp - 1 - i) * 20, rowY, i < hud.hp);
-    rowY += 24;
+    rowY += 26;
   }
-  if (hud.enemyAmmo != null) {
-    drawText(ctx, 'COP AMMO', W - 16 - Math.max(1, Math.min(hud.enemyAmmo, 10)) * 13 - 10, rowY + 2, {
-      size: 9,
-      color: '#ff8a8a',
-      align: 'right',
-    });
-    if (hud.enemyAmmo === 0) drawText(ctx, '0', W - 20, rowY + 2, { size: 10, color: '#ff8a8a', align: 'right' });
-    else iconRow(ctx, hud.enemyAmmo, W - 22, rowY + 2, (x, y) => bulletIcon(ctx, x, y, '#ff5a5a', '#9d1c2c'));
-    rowY += 24;
-  }
-  if (hud.misses != null) {
-    drawText(ctx, 'MISSES', W - 16 - hud.maxMisses * 20 - 6, rowY, { size: 9, align: 'right' });
-    for (let i = 0; i < hud.maxMisses; i++) {
-      drawText(ctx, i < hud.misses ? 'X' : 'O', W - 22 - (hud.maxMisses - 1 - i) * 20, rowY, {
-        size: 12,
-        color: i < hud.misses ? '#ff3b3b' : '#6f6a85',
-      });
-    }
-    rowY += 24;
-  }
-  if (hud.escapes != null && hud.escapes > 0) {
-    drawText(ctx, `ESCAPES ${hud.escapes}/${hud.maxEscapes}`, W - 16, rowY, { size: 9, color: '#ff8a8a', align: 'right' });
+  if (hud.enemySlots != null) {
+    const labelX = slotRow(ctx, 'enemy', hud.enemyAmmo, hud.enemySlots, W - 22, rowY, { fill: '#ff3b3b', tip: '#9d1c2c' });
+    drawText(ctx, hud.enemyLabel || 'ENEMY AMMO', labelX, rowY, { size: 9, color: '#ff8a8a', align: 'right' });
   }
 
   if (hud.score == null && game.score.streak >= 3) {

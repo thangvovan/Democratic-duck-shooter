@@ -19,7 +19,7 @@ import { Stage3 } from '../stages/Stage3.js';
 
 import { Menu } from '../ui/Menu.js';
 import { QuestionUI } from '../ui/QuestionUI.js';
-import { TutorialUI } from '../ui/TutorialUI.js';
+import { BriefingUI } from '../ui/BriefingUI.js';
 import { LeaderboardUI } from '../ui/Leaderboard.js';
 import { ResultScreen } from '../ui/ResultScreen.js';
 import { renderHud, renderCrosshair } from '../ui/HUD.js';
@@ -62,7 +62,7 @@ export class Game {
     });
     this.menu.setMuted(this.audio.muted);
     this.questionUI = new QuestionUI(uiRoot, this.audio);
-    this.tutorialUI = new TutorialUI(uiRoot);
+    this.briefingUI = new BriefingUI(uiRoot);
     this.leaderboardUI = new LeaderboardUI(uiRoot, { onBack: () => this.closeLeaderboard() });
     this.resultScreen = new ResultScreen(uiRoot, {
       onPlayAgain: () => this.startRun(),
@@ -106,6 +106,12 @@ export class Game {
         return;
       }
       if (typing || e.repeat) return;
+      // Buttons already activate on Enter natively; only handle Enter when focus is elsewhere.
+      if (e.key === 'Enter' && this.briefingUI.visible && !this.paused && !(e.target instanceof HTMLButtonElement)) {
+        e.preventDefault();
+        this.briefingUI.continue();
+        return;
+      }
       if (e.key === 'm' || e.key === 'M') this.toggleMute();
       else if (!this.paused && QUESTION_STATES.has(this.state)) this.questionUI.handleKey(e.key);
     });
@@ -135,7 +141,7 @@ export class Game {
     if (next !== STATES.LEADERBOARD) this.leaderboardUI.hide();
     if (!GAMEPLAY_STATES.has(next)) {
       this.setPaused(false);
-      this.tutorialUI.hide();
+      this.briefingUI.hide();
     }
 
     switch (next) {
@@ -186,7 +192,7 @@ export class Game {
       this.changeState(STATES.STAGE_2_QUESTIONS);
       this.setStage(new Stage2(this));
     } else if (this.stage instanceof Stage2) {
-      this.changeState(STATES.STAGE_3_BOSS);
+      this.changeState(STATES.STAGE_3_QUESTIONS);
       this.setStage(new Stage3(this));
     }
   }
@@ -225,7 +231,7 @@ export class Game {
           ducksShot: stats.ducksShot,
           bodyguardsShot: stats.bodyguardsShot,
           bulletsFired: stats.bulletsFired,
-          escapes: stats.escapes,
+          shields: stats.shields,
           presidentDefeated: stats.presidentDefeated,
         },
       });
@@ -254,6 +260,7 @@ export class Game {
     if (this.stage) this.stage.exit();
     this.effects.clear();
     this.questionUI.cancel();
+    this.briefingUI.hide();
     this.stage = stage;
     if (stage) stage.enter();
   }

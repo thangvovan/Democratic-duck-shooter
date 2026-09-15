@@ -8,6 +8,7 @@ export class ShootingSystem {
     this.canvas = canvas;
     this.pointer = { x: W / 2, y: H / 2, inside: false };
     this.noAmmoCooldown = 0;
+    this.hitPadding = 0;
 
     this.onMove = this.onMove.bind(this);
     this.onDown = this.onDown.bind(this);
@@ -36,6 +37,7 @@ export class ShootingSystem {
   onDown(e) {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     e.preventDefault();
+    this.hitPadding = e.pointerType === 'touch' || e.pointerType === 'pen' ? 16 : 0;
     this.game.audio.unlock();
     this.onMove(e);
     this.shoot(this.pointer.x, this.pointer.y);

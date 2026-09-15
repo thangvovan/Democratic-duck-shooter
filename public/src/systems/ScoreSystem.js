@@ -15,7 +15,7 @@ export class ScoreSystem {
     this.bodyguardsShot = 0;
     this.presidentDefeated = false;
     this.bulletsFired = 0;
-    this.escapes = 0;
+    this.shields = 0; // times President Duck's shield came back
   }
 
   registerShot() {
@@ -62,7 +62,7 @@ export class ScoreSystem {
       bodyguardsShot: this.bodyguardsShot,
       presidentDefeated: this.presidentDefeated,
       bulletsFired: this.bulletsFired,
-      escapes: this.escapes,
+      shields: this.shields,
       bestStreak: this.bestStreak,
     };
   }

@@ -1,7 +1,9 @@
 import { QUESTIONS } from '../data/questions.js';
+import { answerSlot } from '../data/answerHash.js';
 import { shuffle } from '../utils/math.js';
 
 // Pure question logic: draws questions without repeats within a session and tracks answers.
+// The correct option is never kept in plain form; it is decoded from answerCode only when needed.
 export class QuestionSystem {
   constructor(pools = QUESTIONS) {
     this.pools = pools;
@@ -40,12 +42,18 @@ export class QuestionSystem {
     return {
       question: q.question,
       options: order.map((i) => q.options[i]),
-      correctAnswer: order.indexOf(q.correctAnswer),
+      order, // displayed position -> original option index
+      answerCode: q.answerCode,
     };
   }
 
+  // Displayed index of the correct option.
+  correctIndex(q) {
+    return q.order.indexOf(answerSlot(q.question, q.answerCode));
+  }
+
   answer(question, optionIndex) {
-    const isCorrect = optionIndex === question.correctAnswer;
+    const isCorrect = optionIndex >= 0 && question.order[optionIndex] === answerSlot(question.question, question.answerCode);
     this.total++;
     if (isCorrect) this.correct++;
     else this.wrong++;

@@ -1,9 +1,9 @@
-import { Duck } from './Duck.js';
+import { ArmedDuck } from './ArmedDuck.js';
 import { PALETTES } from './duckArt.js';
 import { W, GROUND_Y } from '../utils/draw.js';
 
-// Stage 3 bodyguard: bigger, slower duck in a black suit that patrols near the president.
-export class Bodyguard extends Duck {
+// Stage 3 bodyguard: bigger, slower armed duck in a black suit that patrols near the president.
+export class Bodyguard extends ArmedDuck {
   constructor(o = {}) {
     super({
       size: 60,

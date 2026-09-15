@@ -52,9 +52,21 @@ Không có Redis trên Vercel thì điểm chỉ lưu tạm trong RAM và sẽ m
 
 Mỗi game chỉ có 2–3 request. Gameplay (click, đạn, chuyển động) chạy hoàn toàn ở client.
 
+### Luật chơi chính (`public/src/data/rules.js`)
+- Mỗi stage 3:00, tính cả lúc trả lời câu hỏi lẫn lúc bắn. Lúc bắn không giới hạn thời gian riêng, wave kết thúc khi hết đạn.
+- Mỗi câu hỏi 15 giây. Stage 1 và 2: 5 câu/wave. Stage 3: 8 câu/wave.
+- Trước mỗi stage có bảng thông báo luật riêng. Bảng cách chơi hiện trước tutorial.
+- Stage 2: câu sai = đạn cho cảnh sát. Stage 3: câu sai = đạn cho bodyguard. Hạ 3 bodyguard thì khiên President Duck tắt; sau 50 giây bắn thì khiên hồi và có bodyguard mới.
+
+### Câu hỏi và đáp án mã hóa
+- Sửa câu hỏi trong `data-src/questions.source.js` (đáp án dạng thường, **không** được serve cho người chơi).
+- Chạy `npm run encode` (tự chạy trong `npm run build`) để sinh `public/src/data/questions.js`: mỗi câu chỉ có `answerCode`.
+- Đáp án = `FNV-1a(question + code) % 4`, là index trong hash table 4 ô (`public/src/data/answerHash.js`), mất vài micro giây mỗi câu.
+- Cách này chặn việc mở F12 đọc thẳng đáp án, nhưng hàm giải mã vẫn nằm ở client. Muốn chặn hoàn toàn thì phải để server giữ đáp án và chấm từng câu.
+
 ### Anti-cheat cơ bản (`lib/validate.js`)
 - Token dùng 1 lần, có chữ ký HMAC, phải chơi đủ thời gian tối thiểu, hết hạn sau 2 giờ.
-- Stats phải khớp luật: `correct + wrong = questions ≤ 16`, `ducksShot ≤ correct`, số bodyguard khớp số lần boss chạy thoát, `bulletsFired ≥ số lần trúng`…
+- Stats phải khớp luật: `correct + wrong = questions`, số câu không vượt quá thời gian chơi cho phép, `số phát bắn ≤ correct`, `số phát bắn ≥ số lần trúng`, số bodyguard khớp số lần khiên hồi…
 - Điểm phải nằm trong `[điểm gốc, điểm gốc × 2]` (combo tối đa x2).
 - Nickname được sanitize (A–Z, 0–9, space, `_`, `-`, 2–12 ký tự). UI luôn render bằng `textContent`.
 - Rate limit theo IP và nickname.

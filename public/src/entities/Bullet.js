@@ -35,8 +35,8 @@ export class EnemyBullet {
     if (this.trail.length > 12) this.trail.splice(0, 2);
   }
 
-  hitTest(px, py) {
-    return !this.done && dist2(px, py, this.x, this.y) <= (14 * this.scale + 14) ** 2;
+  hitTest(px, py, pad = 0) {
+    return !this.done && dist2(px, py, this.x, this.y) <= (14 * this.scale + 14 + pad) ** 2;
   }
 
   render(ctx) {

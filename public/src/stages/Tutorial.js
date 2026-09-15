@@ -1,25 +1,45 @@
 import { BaseStage } from './BaseStage.js';
 import { Duck } from '../entities/Duck.js';
+import { RULES } from '../data/rules.js';
 import { W, GROUND_Y, drawText } from '../utils/draw.js';
 import { setTutorialCompleted } from '../utils/storage.js';
 
-// One-time tutorial: a single slow duck, click it, see the score and a joke, then start.
+// One-time tutorial: how-to-play panel first, then a single slow duck to shoot.
 export class Tutorial extends BaseStage {
   constructor(game) {
     super(game, { label: 'TUTORIAL', background: 'range' });
     this.countsStats = false;
-    this.phase = 'intro';
-    this.timer = 1.4;
+    this.phase = 'briefing';
+    this.timer = 0;
     this.duck = null;
     this.tutorialScore = 0;
   }
 
   enter() {
-    this.game.effects.showMessage('TUTORIAL', { sub: 'WELCOME TO THE SHOOTING RANGE', duration: 1.5 });
+    this.game.briefingUI.show({
+      title: 'HOW TO PLAY',
+      subtitle: 'TUTORIAL',
+      lines: [
+        'ANSWER QUESTIONS: CORRECT = +1 BULLET',
+        'CLICK TO SHOOT DUCKS: HIT = SCORE',
+        '3 HITS IN A ROW = COMBO x1.5, 5 HITS = x2',
+        `EACH STAGE LASTS ${RULES.STAGE_TIME / 60}:00 (QUESTIONS + SHOOTING)`,
+        'ESC = PAUSE, M = MUTE',
+        'NOW: SHOOT ONE PRACTICE DUCK',
+      ],
+      button: 'START TUTORIAL',
+      onContinue: () => this.begin(),
+    });
+  }
+
+  begin() {
+    this.phase = 'intro';
+    this.timer = 1.2;
+    this.game.effects.showMessage('TUTORIAL', { sub: 'WELCOME TO THE SHOOTING RANGE', duration: 1.3 });
   }
 
   exit() {
-    this.game.tutorialUI.hide();
+    this.game.briefingUI.hide();
   }
 
   update(dt) {
@@ -44,7 +64,12 @@ export class Tutorial extends BaseStage {
       this.timer -= dt;
       if (this.timer <= 0) {
         this.phase = 'done';
-        this.game.tutorialUI.show(() => this.game.startRun());
+        this.game.briefingUI.show({
+          title: 'GOOD SHOT!',
+          lines: ['THAT DUCK WAS WORTH 100 POINTS.', 'THE REAL GAME STARTS NOW.'],
+          button: 'START GAME',
+          onContinue: () => this.game.startRun(),
+        });
       }
     }
   }
@@ -59,12 +84,12 @@ export class Tutorial extends BaseStage {
 
   onShoot(x, y) {
     const { effects, jokes } = this.game;
-    if (this.duck?.hitTest(x, y)) {
+    if (this.duck?.hitTest(x, y, this.pad)) {
       this.duck.kill();
       this.tutorialScore += 100;
       effects.addPopup(this.duck.x, this.duck.y - 30, '+100', { size: 22 });
       effects.addFeathers(this.duck.x, this.duck.y, this.duck.palette.body, 16);
-      jokes.tell(this.duck.x, this.duck.y);
+      jokes.tell();
       effects.showMessage('GOOD SHOT!', { sub: 'EVERY DUCK = POINTS', duration: 1.8 });
       setTutorialCompleted();
       this.phase = 'hit';
@@ -82,7 +107,7 @@ export class Tutorial extends BaseStage {
   renderOverlay(ctx) {
     if (this.phase !== 'shoot' || !this.duck) return;
     if (Math.floor(this.time * 2.5) % 2 === 0) {
-      drawText(ctx, 'CLICK TO SHOOT', W / 2, 190 - 110, { size: 26, color: '#ffd23f' });
+      drawText(ctx, 'CLICK TO SHOOT', W / 2, 80, { size: 26, color: '#ffd23f' });
     }
     const bob = Math.sin(this.time * 6) * 6;
     const { x, y, size } = this.duck;

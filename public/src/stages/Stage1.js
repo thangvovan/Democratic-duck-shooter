@@ -1,5 +1,6 @@
 import { WaveStage } from './WaveStage.js';
 import { STATES } from '../game/GameState.js';
+import { RULES } from '../data/rules.js';
 import { Duck } from '../entities/Duck.js';
 import { PALETTES } from '../entities/duckArt.js';
 import { W, GROUND_Y } from '../utils/draw.js';
@@ -7,7 +8,7 @@ import { rand, pick } from '../utils/math.js';
 
 const DUCK_PALETTES = [PALETTES.yellow, PALETTES.white, PALETTES.mallard, PALETTES.pink];
 
-// STAGE 1 — SCHOOL: correct answers = bullets, lots of small fast ducks.
+// STAGE 1 — SCHOOL: correct answers = bullets, lots of small ducks.
 export class Stage1 extends WaveStage {
   constructor(game) {
     super(game, {
@@ -15,24 +16,24 @@ export class Stage1 extends WaveStage {
       tagline: 'SHOOT THE DUCKS',
       background: 'school',
       pool: 'school',
-      waves: 2,
-      waveTime: 25,
+      questionsPerWave: RULES.QUESTIONS_PER_WAVE[1],
       questionState: STATES.STAGE_1_QUESTIONS,
       shootingState: STATES.STAGE_1_SHOOTING,
       wrongText: 'NO BULLET',
+      briefing: [
+        `${RULES.QUESTIONS_PER_WAVE[1]} QUESTIONS PER WAVE, ${RULES.QUESTION_TIME}S EACH`,
+        'CORRECT ANSWER = +1 BULLET',
+        'SMALL DUCKS: TAKE YOUR TIME TO AIM',
+        'SHOOTING HAS NO TIME LIMIT',
+        `STAGE TIME: ${RULES.STAGE_TIME / 60}:00 (QUESTIONS + SHOOTING)`,
+      ],
     });
     this.spawnTimer = 0;
-    this.emptyTimer = 0;
-  }
-
-  onWaveStart() {
-    this.emptyTimer = 0;
   }
 
   onShootingStart() {
     const { effects, audio } = this.game;
     if (this.ammo === 0) {
-      effects.showMessage('NO AMMO!', { sub: 'THE DUCKS ARE LAUGHING AT YOU', color: '#ff5a5a', duration: 2 });
       audio.play('wrong');
     } else {
       effects.showMessage('SHOOT!', { sub: `${this.ammo} BULLET${this.ammo > 1 ? 'S' : ''}`, duration: 1.1 });
@@ -46,8 +47,8 @@ export class Stage1 extends WaveStage {
       new Duck({
         x: rand(120, W - 120),
         y: GROUND_Y + rand(20, 50),
-        size: rand(38, 46),
-        speed: this.wave === 1 ? rand(210, 250) : rand(250, 290),
+        size: rand(17, 21),
+        speed: this.wave === 1 ? rand(85, 100) : rand(95, 110),
         palette: pick(DUCK_PALETTES),
         accessory: Math.random() < 0.25 ? 'glasses' : null,
       }),
@@ -55,16 +56,7 @@ export class Stage1 extends WaveStage {
   }
 
   updateShooting(dt) {
-    if (this.ammo === 0) {
-      // Let the last hit duck fall (or let the ducks mock an empty gun) before ending.
-      this.emptyTimer += dt;
-      return this.emptyTimer > (this.waveKills === 0 && this.game.score.bulletsFired === 0 ? 2.2 : 1.2);
-    }
-    if (this.waveTimer <= 0) {
-      this.ammo = 0;
-      this.game.effects.showMessage("TIME'S UP!", { color: '#ff5a5a', duration: 1.2 });
-      return false;
-    }
+    if (this.ammo === 0) return true; // out of ammo ends the shooting turn right away
     this.spawnTimer -= dt;
     const maxAlive = this.wave === 1 ? 5 : 6;
     const alive = this.ducks.reduce((n, d) => n + (d.alive ? 1 : 0), 0);
@@ -78,13 +70,13 @@ export class Stage1 extends WaveStage {
   onShoot(x, y) {
     for (let i = this.ducks.length - 1; i >= 0; i--) {
       const duck = this.ducks[i];
-      if (!duck.hitTest(x, y)) continue;
+      if (!duck.hitTest(x, y, this.pad)) continue;
       duck.kill();
       this.waveKills++;
       const { score, jokes, effects } = this.game;
       score.registerKill('duck', duck.x, duck.y);
       effects.addFeathers(duck.x, duck.y, duck.palette.body);
-      jokes.tell(duck.x, duck.y);
+      jokes.tell();
       return { hit: true };
     }
     return { hit: false };

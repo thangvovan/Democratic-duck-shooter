@@ -11,6 +11,11 @@ export class BaseStage {
     this.showPlayer = true;
   }
 
+  // Extra hit radius for touch input (fingers are less precise than a mouse).
+  get pad() {
+    return this.game.shooting.hitPadding;
+  }
+
   enter() {}
   exit() {}
 

@@ -115,8 +115,10 @@ export class Duck {
     this.facing = Math.cos(this.angle) >= 0 ? 1 : -1;
   }
 
-  hitTest(px, py) {
-    return this.alive && dist2(px, py, this.x, this.y) <= (this.size * 0.64) ** 2;
+  hitTest(px, py, pad = 0) {
+    // Small ducks keep a minimum hit radius so they stay fair to click.
+    const radius = Math.max(this.size * 0.64, 22) + pad;
+    return this.alive && dist2(px, py, this.x, this.y) <= radius ** 2;
   }
 
   kill() {

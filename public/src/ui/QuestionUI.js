@@ -1,10 +1,19 @@
 // Question panel (DOM). Timing is driven by the game loop via update(dt), so pausing
 // freezes the timer and nothing needs to be cleaned up with setTimeout.
+// After an answer the question slides out right away and the next one slides in.
 import { h, screen } from './dom.js';
 import { RULES } from '../data/rules.js';
+import { formatTime } from '../utils/math.js';
 
 const KEYS = { 1: 0, 2: 1, 3: 2, 4: 3, a: 0, b: 1, c: 2, d: 3 };
 const LETTERS = ['A', 'B', 'C', 'D'];
+
+// Restart a CSS animation class on an element.
+function replay(el, className) {
+  el.classList.remove(className);
+  void el.offsetWidth;
+  el.classList.add(className);
+}
 
 export class QuestionUI {
   constructor(root, audio) {
@@ -14,6 +23,8 @@ export class QuestionUI {
 
     this.stageEl = h('span', { class: 'q-stage' });
     this.progressEl = h('span', { class: 'q-progress' });
+    this.stageTimeEl = h('span', { class: 'q-stage-time' });
+    this.shownStageSecond = -1;
     this.rewardsEl = h('div', { class: 'q-rewards' });
     this.timerFill = h('div', { class: 'q-timer-fill' });
     this.textEl = h('h2', { class: 'q-text' });
@@ -29,17 +40,17 @@ export class QuestionUI {
       btn.label = label;
       return btn;
     });
+    this.bodyEl = h('div', { class: 'q-body' }, this.textEl, h('div', { class: 'q-options' }, this.buttons));
 
     this.el = screen(
       'question-screen',
       h(
         'div',
         { class: 'panel q-panel' },
-        h('header', { class: 'q-header' }, this.stageEl, this.progressEl),
+        h('header', { class: 'q-header' }, this.stageEl, this.progressEl, this.stageTimeEl),
         this.rewardsEl,
         h('div', { class: 'q-timer' }, this.timerFill),
-        this.textEl,
-        h('div', { class: 'q-options' }, this.buttons),
+        this.bodyEl,
         this.feedbackEl,
       ),
     );
@@ -54,6 +65,10 @@ export class QuestionUI {
     this.opts = opts;
     this.index = 0;
     this.stageEl.textContent = opts.title;
+    this.feedbackEl.textContent = '';
+    this.feedbackEl.className = 'q-feedback';
+    this.shownStageSecond = -1;
+    this.renderStageTime();
     this.el.hidden = false;
     this.showQuestion();
   }
@@ -68,8 +83,8 @@ export class QuestionUI {
       btn.disabled = false;
       btn.classList.remove('correct', 'wrong');
     });
-    this.feedbackEl.textContent = '';
-    this.feedbackEl.className = 'q-feedback';
+    this.bodyEl.classList.remove('q-leave');
+    replay(this.bodyEl, 'q-enter');
     this.timeLeft = RULES.QUESTION_TIME;
     this.lastTick = Math.ceil(this.timeLeft);
     this.phase = 'answer';
@@ -80,7 +95,9 @@ export class QuestionUI {
   renderRewards() {
     const r = this.opts.getRewards();
     const items = [h('span', { class: 'reward reward-ammo', text: `YOUR BULLETS: ${r.ammo}` })];
-    if (r.enemyAmmo != null) items.push(h('span', { class: 'reward reward-enemy', text: `COP BULLETS: ${r.enemyAmmo}` }));
+    if (r.enemyAmmo != null) {
+      items.push(h('span', { class: 'reward reward-enemy', text: `${r.enemyLabel || 'ENEMY BULLETS'}: ${r.enemyAmmo}` }));
+    }
     this.rewardsEl.replaceChildren(...items);
   }
 
@@ -97,26 +114,39 @@ export class QuestionUI {
     const correct = this.opts.onAnswer(q, index);
 
     this.buttons.forEach((btn) => (btn.disabled = true));
-    this.buttons[q.correctAnswer].classList.add('correct');
+    this.buttons[this.opts.getCorrectIndex(q)].classList.add('correct');
     if (!correct && index >= 0) this.buttons[index].classList.add('wrong');
 
+    this.feedbackEl.className = `q-feedback ${correct ? 'good' : 'bad'}`;
     if (correct) {
       this.feedbackEl.textContent = 'CORRECT! +1 BULLET';
-      this.feedbackEl.classList.add('good');
       this.audio.play('correct');
     } else {
       const head = index < 0 ? "TIME'S UP!" : 'WRONG!';
       this.feedbackEl.textContent = this.opts.wrongText ? `${head} ${this.opts.wrongText}` : head;
-      this.feedbackEl.classList.add('bad');
       this.audio.play('wrong');
     }
+    replay(this.feedbackEl, 'q-pop');
     this.renderRewards();
+
+    // Slide to the next question immediately.
+    this.bodyEl.classList.remove('q-enter');
+    this.bodyEl.classList.add('q-leave');
     this.phase = 'feedback';
-    this.feedbackTimer = 1.1;
+    this.feedbackTimer = RULES.QUESTION_FEEDBACK_TIME;
+  }
+
+  renderStageTime() {
+    const seconds = Math.ceil(this.opts.getStageTime?.() ?? 0);
+    if (seconds === this.shownStageSecond) return;
+    this.shownStageSecond = seconds;
+    this.stageTimeEl.textContent = `STAGE ${formatTime(seconds)}`;
+    this.stageTimeEl.classList.toggle('bad', seconds <= 20);
   }
 
   update(dt) {
     if (!this.opts) return;
+    this.renderStageTime();
     if (this.phase === 'answer') {
       this.timeLeft -= dt;
       const second = Math.ceil(this.timeLeft);
@@ -151,5 +181,6 @@ export class QuestionUI {
     this.opts = null;
     this.phase = 'idle';
     this.el.hidden = true;
+    this.bodyEl.classList.remove('q-leave', 'q-enter');
   }
 }

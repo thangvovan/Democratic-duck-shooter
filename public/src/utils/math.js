@@ -3,7 +3,11 @@ export const randInt = (min, max) => Math.floor(rand(min, max + 1));
 export const pick = (list) => list[Math.floor(Math.random() * list.length)];
 export const clamp = (v, min, max) => (v < min ? min : v > max ? max : v);
 export const lerp = (a, b, t) => a + (b - a) * t;
-export const dist2 = (ax, ay, bx, by) => (ax - bx) ** 2 + (ay - by) ** 2;
+export const formatTime = (seconds) => {
+  const s = Math.max(0, Math.ceil(seconds));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
+export const dist2 =(ax, ay, bx, by) => (ax - bx) ** 2 + (ay - by) ** 2;
 
 export function shuffle(list) {
   for (let i = list.length - 1; i > 0; i--) {

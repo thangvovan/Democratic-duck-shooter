@@ -24,24 +24,24 @@ async function call(method, path, ip, body) {
   return { status: res.status, data };
 }
 
+// Questions are limited by elapsed time on the server, so keep the fake game small.
 function fakeGame() {
-  const correct = 10 + Math.floor(Math.random() * 7);
-  const ducksShot = Math.floor(correct * 0.8);
-  const escapes = Math.floor(Math.random() * 3);
-  const bodyguardsShot = 3 * (escapes + 1);
-  const presidentDefeated = Math.random() < 0.6;
-  const base = ducksShot * 100 + bodyguardsShot * 150 + (presidentDefeated ? 1000 : 0);
+  const questions = 1;
+  const correct = 1;
+  const presidentDefeated = false;
+  const ducksShot = Math.random() < 0.5 ? 1 : 0;
+  const base = ducksShot * 100;
   return {
-    score: Math.round(base * 1.3),
+    score: base,
     stats: {
-      questions: 16,
+      questions,
       correct,
-      wrong: 16 - correct,
+      wrong: questions - correct,
       ducksShot,
-      bodyguardsShot,
+      bodyguardsShot: 0,
       presidentDefeated,
-      bulletsFired: ducksShot + bodyguardsShot + 8,
-      escapes,
+      bulletsFired: 1,
+      shields: 0,
     },
   };
 }

@@ -8,7 +8,7 @@ export const PALETTES = {
   pink: { body: '#ff9fc6', wing: '#ff6fa8', head: '#ff9fc6' },
   police: { body: '#2f5bd3', wing: '#1f3f9c', head: '#ffd93b' },
   bodyguard: { body: '#26262e', wing: '#15151b', head: '#ffd93b' },
-  president: { body: '#1c2f6b', wing: '#13214d', head: '#ffe27a' },
+  president: { body: '#1f4fb8', wing: '#173c8c', head: '#ffe27a' },
 };
 
 function circle(ctx, x, y, r, fill, lineWidth = 3) {
@@ -58,22 +58,24 @@ export function drawDuck(ctx, o) {
     ctx.closePath();
     ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.fillStyle = o.accessory === 'president' ? '#d62839' : '#111';
-    ctx.fillRect(15, -2, 4, 12);
-  }
-  if (o.accessory === 'president') {
-    ctx.save();
-    ctx.lineWidth = 7;
-    ctx.strokeStyle = '#d62839';
-    ctx.beginPath();
-    ctx.moveTo(-14, -8);
-    ctx.lineTo(10, 21);
-    ctx.stroke();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#ffffff';
-    ctx.stroke();
-    ctx.restore();
-    circle(ctx, 17, -3, 3.5, '#d62839', 2);
+    if (o.accessory === 'president') {
+      // Long red tie
+      ctx.beginPath();
+      ctx.moveTo(15, -5);
+      ctx.lineTo(20, -5);
+      ctx.lineTo(22, 13);
+      ctx.lineTo(18, 19);
+      ctx.lineTo(14, 13);
+      ctx.closePath();
+      ctx.fillStyle = '#d62839';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.lineWidth = 3;
+    } else {
+      ctx.fillStyle = '#111';
+      ctx.fillRect(15, -2, 4, 12);
+    }
   }
   if (o.accessory === 'police') {
     circle(ctx, 12, 4, 4, '#ffd23f', 2);
@@ -93,6 +95,30 @@ export function drawDuck(ctx, o) {
 
   // Head
   circle(ctx, 18, -14, 12, p.head);
+
+  if (o.accessory === 'president') {
+    // Voluminous swept-up hair
+    ctx.beginPath();
+    ctx.moveTo(5, -10);
+    ctx.quadraticCurveTo(1, -26, 12, -30);
+    ctx.quadraticCurveTo(22, -43, 35, -36);
+    ctx.quadraticCurveTo(39, -32, 33, -28);
+    ctx.quadraticCurveTo(26, -30, 22, -23);
+    ctx.quadraticCurveTo(14, -22, 9, -13);
+    ctx.closePath();
+    ctx.fillStyle = '#4a2f1f';
+    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = OUTLINE;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(12, -29);
+    ctx.quadraticCurveTo(22, -39, 31, -34);
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.strokeStyle = OUTLINE;
+  }
 
   // Beak
   ctx.beginPath();
@@ -119,7 +145,21 @@ export function drawDuck(ctx, o) {
     ctx.moveTo(25.5, -20.5);
     ctx.lineTo(18.5, -13.5);
     ctx.stroke();
-  } else if (o.accessory === 'bodyguard' || o.accessory === 'president' || o.shades) {
+  } else if (o.accessory === 'president') {
+    const eyeR = o.scared ? 5.6 : 4.3;
+    circle(ctx, 22, -16, eyeR, '#fff', 2);
+    circle(ctx, o.scared ? 22.5 : 23.2, -16, o.scared ? 1.5 : 2.2, '#111', 0);
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    if (o.scared) {
+      ctx.moveTo(17, -22);
+      ctx.lineTo(26, -25);
+    } else {
+      ctx.moveTo(17, -22.5);
+      ctx.lineTo(27, -21);
+    }
+    ctx.stroke();
+  } else if (o.accessory === 'bodyguard' || o.shades) {
     ctx.fillStyle = '#111';
     ctx.fillRect(15, -21, 14, 7);
     ctx.lineWidth = 2;
@@ -165,16 +205,6 @@ export function drawDuck(ctx, o) {
     ctx.moveTo(9, -12);
     ctx.quadraticCurveTo(2, -4, 6, 4);
     ctx.stroke();
-  } else if (o.accessory === 'president' && !o.hatOff) {
-    ctx.fillStyle = '#111';
-    ctx.fillRect(9, -48, 19, 22);
-    ctx.lineWidth = 2.5;
-    ctx.strokeRect(9, -48, 19, 22);
-    ctx.fillStyle = '#d62839';
-    ctx.fillRect(9, -32, 19, 4);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(4, -28, 29, 4);
-    ctx.strokeRect(4, -28, 29, 4);
   }
 
   ctx.restore();

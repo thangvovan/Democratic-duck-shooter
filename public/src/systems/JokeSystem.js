@@ -1,8 +1,9 @@
 import { JOKES } from '../data/jokes.js';
 import { shuffle } from '../utils/math.js';
-import { W, GROUND_Y } from '../utils/draw.js';
+import { W, H } from '../utils/draw.js';
 
-// Picks jokes from a shuffled bag so all 20 rotate and the same line never repeats back-to-back.
+// The shooter says a joke every time he hits a duck. Jokes come from a shuffled bag so all 20
+// rotate and the same line never repeats back-to-back.
 export class JokeSystem {
   constructor(effects, jokes = JOKES) {
     this.effects = effects;
@@ -21,14 +22,10 @@ export class JokeSystem {
     return this.last;
   }
 
-  // Randomly the hit duck or the shooter says the joke.
-  tell(x, y) {
+  tell() {
     const text = this.next();
-    if (Math.random() < 0.5) {
-      this.effects.addBubble(x, y, text, { speaker: 'duck' });
-    } else {
-      this.effects.addBubble(W / 2, GROUND_Y + 20, text, { speaker: 'player' });
-    }
+    // Beside the shooter (to his right), low on the screen so it doesn't block the view.
+    this.effects.addBubble(W / 2 + 95, H - 50, text, { speaker: 'player' });
     return text;
   }
 }

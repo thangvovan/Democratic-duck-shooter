@@ -232,10 +232,11 @@ export class EffectsSystem {
     const width = Math.max(...b.lines.map((l) => ctx.measureText(l).width)) + 28;
     const height = b.lines.length * lineHeight + 22;
 
-    const above = b.speaker === 'player' || b.y > 180;
-    let bx = clamp(b.x - width / 2, 8, W - width - 8);
-    let by = above ? b.y - height - 42 : b.y + 42;
-    by = clamp(by, 52, H - height - 8);
+    // The shooter's bubble sits beside him (tail pointing left); duck bubbles sit above/below.
+    const side = b.speaker === 'player';
+    const above = !side && b.y > 180;
+    const bx = side ? clamp(b.x + 18, 8, W - width - 8) : clamp(b.x - width / 2, 8, W - width - 8);
+    const by = clamp(side ? b.y - height / 2 : above ? b.y - height - 42 : b.y + 42, 52, H - height - 8);
 
     const t = 1 - b.life / b.maxLife;
     const scale = t < 0.12 ? easeOutBack(t / 0.12) : 1;
@@ -244,8 +245,7 @@ export class EffectsSystem {
     ctx.scale(scale, scale);
     ctx.translate(-(bx + width / 2), -(by + height / 2));
 
-    const tailX = clamp(b.x, bx + 16, bx + width - 16);
-    ctx.fillStyle = b.speaker === 'player' ? '#fffbe6' : '#ffffff';
+    ctx.fillStyle = side ? '#fffbe6' : '#ffffff';
     ctx.strokeStyle = '#1a1030';
     ctx.lineWidth = 3;
     roundRectPath(ctx, bx, by, width, height, 10);
@@ -253,18 +253,29 @@ export class EffectsSystem {
     ctx.stroke();
 
     ctx.beginPath();
-    if (above) {
-      ctx.moveTo(tailX - 9, by + height - 2);
-      ctx.lineTo(tailX, by + height + 16);
-      ctx.lineTo(tailX + 9, by + height - 2);
+    if (side) {
+      const tailY = clamp(b.y, by + 14, by + height - 14);
+      ctx.moveTo(bx + 2, tailY - 9);
+      ctx.lineTo(bx - 16, tailY + 2);
+      ctx.lineTo(bx + 2, tailY + 9);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillRect(bx + 1, tailY - 7, 5, 14);
     } else {
-      ctx.moveTo(tailX - 9, by + 2);
-      ctx.lineTo(tailX, by - 16);
-      ctx.lineTo(tailX + 9, by + 2);
+      const tailX = clamp(b.x, bx + 16, bx + width - 16);
+      if (above) {
+        ctx.moveTo(tailX - 9, by + height - 2);
+        ctx.lineTo(tailX, by + height + 16);
+        ctx.lineTo(tailX + 9, by + height - 2);
+      } else {
+        ctx.moveTo(tailX - 9, by + 2);
+        ctx.lineTo(tailX, by - 16);
+        ctx.lineTo(tailX + 9, by + 2);
+      }
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillRect(tailX - 7, above ? by + height - 5 : by + 1, 14, 5);
     }
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillRect(tailX - 7, above ? by + height - 5 : by + 1, 14, 5);
 
     ctx.fillStyle = '#1a1030';
     ctx.textAlign = 'center';

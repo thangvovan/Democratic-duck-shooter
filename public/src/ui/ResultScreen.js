@@ -2,8 +2,9 @@ import { h, screen, formatScore } from './dom.js';
 
 const OUTCOMES = {
   victory: 'PRESIDENT DUCK HAS BEEN DEFEATED!',
-  escaped: 'THE PRESIDENT GOT AWAY...',
+  escaped: "TIME'S UP! THE PRESIDENT ESCAPED...",
   arrested: "YOU'VE BEEN ARRESTED!",
+  shot: 'THE BODYGUARDS GOT YOU!',
 };
 
 export class ResultScreen {
