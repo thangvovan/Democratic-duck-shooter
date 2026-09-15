@@ -7,6 +7,9 @@
   "engines": {
     "node": "22.x"
   },
+  "dependencies": {
+    "redis": "^6.2.1"
+  },
   "scripts": {
     "dev": "node --env-file-if-exists=.env --watch dev-server.js",
     "start": "node --env-file-if-exists=.env dev-server.js",

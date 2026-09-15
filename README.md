@@ -4,7 +4,7 @@ Web game arcade parody 2D: **trả lời câu hỏi → nhận đạn → bắn 
 
 - Frontend: HTML + CSS + JavaScript (ES modules), gameplay trên **Canvas 2D**, không bundler, không dependency.
 - Backend: REST API stateless (Vercel serverless functions trong `api/`), chạy local bằng `dev-server.js` (Node thuần). File này cố tình không đặt tên `server.js`, vì Vercel sẽ tự nhận `server.js` làm Node server và bỏ qua cấu hình static + `api/`.
-- Database: Upstash Redis (REST) ở production; file JSON `data/scores.json` khi chạy local.
+- Database: Redis qua `REDIS_URL` ở production; file JSON `data/scores.json` khi chạy local.
 
 ## Chạy local
 
@@ -27,7 +27,7 @@ Biến môi trường: copy `.env.example` → `.env` (file `.env` đã được
 | Biến | Bắt buộc | Ý nghĩa |
 |---|---|---|
 | `SCORE_SECRET` | production | Chuỗi ≥16 ký tự để ký session token |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | production | Database (hoặc `KV_REST_API_URL` / `KV_REST_API_TOKEN`) |
+| `REDIS_URL` | production | Chuỗi kết nối Redis (`redis://` hoặc `rediss://`). Để trống khi chạy local |
 | `PORT` | không | Mặc định 3000 |
 | `TRUST_PROXY=1` | không | Tin `X-Forwarded-For` khi đứng sau reverse proxy |
 | `MIN_GAME_SECONDS` | không | Thời gian chơi tối thiểu để nhận điểm (mặc định 25) |
@@ -35,8 +35,8 @@ Biến môi trường: copy `.env.example` → `.env` (file `.env` đã được
 ## Deploy lên Vercel
 
 1. Push repo lên GitHub → Import vào Vercel (Framework preset: **Other**). `vercel.json` đã cấu hình `public/` là static và `api/` là functions.
-2. Vercel → Storage/Marketplace → thêm **Upstash Redis** và kết nối vào project (tự tạo `KV_REST_API_URL`, `KV_REST_API_TOKEN`).
-3. Settings → Environment Variables → thêm `SCORE_SECRET`.
+2. Vercel → Storage → tạo **Redis** và kết nối vào project (Vercel tự tạo biến `REDIS_URL`).
+3. Settings → Environment Variables → thêm `SCORE_SECRET` (≥16 ký tự).
 4. Redeploy.
 
 Không có Redis trên Vercel thì điểm chỉ lưu tạm trong RAM và sẽ mất.
