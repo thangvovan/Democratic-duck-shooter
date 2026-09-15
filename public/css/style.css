@@ -18,7 +18,19 @@ html,
 body {
   margin: 0;
   height: 100%;
-  background: var(--bg);
+  /* Theater curtains fill the space around the 16:9 game on wide or tall screens. */
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 50% 45%, rgba(20, 5, 15, 0.15) 30%, rgba(10, 3, 10, 0.85) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.5)),
+    repeating-linear-gradient(
+      90deg,
+      #4a0c1a 0,
+      #7a1428 18px,
+      #9d1c2c 30px,
+      #7a1428 42px,
+      #4a0c1a 60px
+    );
   color: var(--white);
   font-family: var(--font);
   overflow: hidden;
@@ -37,7 +49,12 @@ body {
   width: min(100vw, calc(100dvh * 16 / 9));
   height: min(100dvh, calc(100vw * 9 / 16));
   container-type: size;
-  box-shadow: 0 0 0 4px var(--ink), 0 20px 60px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 0 4px var(--ink),
+    0 0 0 8px var(--yellow),
+    0 0 0 12px var(--ink),
+    0 0 60px 20px rgba(255, 210, 63, 0.18),
+    0 30px 80px rgba(0, 0, 0, 0.8);
   user-select: none;
   -webkit-user-select: none;
 }
