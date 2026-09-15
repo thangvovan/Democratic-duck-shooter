@@ -8,8 +8,8 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "node --env-file-if-exists=.env --watch server.js",
-    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch dev-server.js",
+    "start": "node --env-file-if-exists=.env dev-server.js",
     "encode": "node scripts/encode-questions.js",
     "build": "node scripts/encode-questions.js && node scripts/check.js",
     "loadtest": "node scripts/loadtest.js"

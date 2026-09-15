@@ -4,7 +4,7 @@ import { readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const dirs = ['api', 'lib', 'public/src', 'scripts', 'data-src'];
-const files = ['server.js'];
+const files = ['dev-server.js'];
 
 function walk(dir) {
   for (const name of readdirSync(dir)) {

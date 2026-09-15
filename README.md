@@ -3,7 +3,7 @@
 Web game arcade parody 2D: **trả lời câu hỏi → nhận đạn → bắn vịt → ghi điểm**.
 
 - Frontend: HTML + CSS + JavaScript (ES modules), gameplay trên **Canvas 2D**, không bundler, không dependency.
-- Backend: REST API stateless (Vercel serverless functions trong `api/`), chạy local bằng `server.js` (Node thuần).
+- Backend: REST API stateless (Vercel serverless functions trong `api/`), chạy local bằng `dev-server.js` (Node thuần). File này cố tình không đặt tên `server.js`, vì Vercel sẽ tự nhận `server.js` làm Node server và bỏ qua cấu hình static + `api/`.
 - Database: Upstash Redis (REST) ở production; file JSON `data/scores.json` khi chạy local.
 
 ## Chạy local
@@ -81,7 +81,7 @@ Kết quả trên máy local (file store): 60 người chơi đồng thời × 3
 ## Cấu trúc
 
 ```
-api/                    Serverless handlers (dùng chung cho Vercel và server.js)
+api/                    Serverless handlers (dùng chung cho Vercel và dev-server.js)
 lib/                    store (Redis/file), token, rate limit, validation
 public/
   index.html, css/
