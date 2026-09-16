@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
-const dirs = ['api', 'lib', 'public/src', 'scripts', 'data-src'];
+const dirs = ['api', 'lib', 'public/src', 'scripts', 'data-src', 'scoreboard'];
 const files = ['dev-server.js'];
 
 function walk(dir) {

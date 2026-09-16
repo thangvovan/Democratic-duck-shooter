@@ -71,6 +71,19 @@ Mỗi game chỉ có 2–3 request. Gameplay (click, đạn, chuyển động) c
 - Nickname được sanitize (A–Z, 0–9, space, `_`, `-`, 2–12 ký tự). UI luôn render bằng `textContent`.
 - Rate limit theo IP và nickname.
 
+## Bảng xếp hạng realtime (chạy local)
+
+Trang riêng chỉ có bảng xếp hạng, hợp để chiếu lên màn hình lớn khi mọi người đang chơi.
+
+```bash
+npm run scoreboard      # http://localhost:4000
+```
+
+- Đọc **cùng nguồn dữ liệu với game**: dùng Redis nếu có `REDIS_URL` trong `.env` (copy đúng chuỗi `REDIS_URL` từ Vercel là xem được điểm của bản đã deploy), không thì đọc `data/scores.json`.
+- Server tự kiểm tra dữ liệu mỗi 2 giây và chỉ đẩy xuống trình duyệt khi có thay đổi, qua Server-Sent Events.
+- Đổi hạng thì hàng tự trượt sang vị trí mới, nháy xanh khi lên hạng, nháy đỏ khi xuống hạng, kèm dấu `▲`/`▼` số hạng. Người mới lọt bảng thì trượt vào từ bên phải, điểm tăng thì chạy số.
+- Biến tùy chọn: `SCOREBOARD_PORT` (4000), `SCOREBOARD_LIMIT` (15 người), `SCOREBOARD_POLL_MS` (2000).
+
 ### Load test
 ```bash
 TRUST_PROXY=1 MIN_GAME_SECONDS=0 npm start
