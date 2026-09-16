@@ -2,8 +2,8 @@ import { W, H } from '../utils/draw.js';
 import { clamp } from '../utils/math.js';
 
 const OUT = '#1a1030';
-const SKIN = '#dca06f';
-const SKIN_DARK = '#c08457';
+const SKIN = '#5a3825';
+const SKIN_DARK = '#3d2418';
 const SHIRT = '#2f3542';
 
 // Everything is drawn in "design units" with the origin at the bottom-center of the screen,

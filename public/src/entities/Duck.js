@@ -9,7 +9,7 @@ export class Duck {
     this.type = o.type || 'duck';
     this.size = o.size ?? 46;
     this.speed = o.speed ?? 200;
-    this.palette = o.palette || PALETTES.yellow;
+    this.palette = o.palette || PALETTES.student;
     this.accessory = o.accessory || null;
     this.bounds = o.bounds || { left: 50, right: W - 50, top: 90, bottom: GROUND_Y - 60 };
     this.lifetime = o.lifetime ?? rand(6, 9);

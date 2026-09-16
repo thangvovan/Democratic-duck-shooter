@@ -49,8 +49,7 @@ export class Stage1 extends WaveStage {
         y: GROUND_Y + rand(20, 50),
         size: rand(17, 21),
         speed: this.wave === 1 ? rand(85, 100) : rand(95, 110),
-        palette: pick(DUCK_PALETTES),
-        accessory: Math.random() < 0.25 ? 'glasses' : null,
+        accessory: "student",
       }),
     );
   }
