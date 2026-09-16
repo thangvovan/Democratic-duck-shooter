@@ -145,6 +145,23 @@ h1 em {
   margin-left: 8px;
 }
 
+.row.playing {
+  border-left-color: var(--green);
+}
+
+.badge {
+  margin-left: 14px;
+  font-size: 10px;
+  color: var(--green);
+  animation: blink 1.6s steps(2, end) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
 .row.top1 {
   background: rgba(255, 210, 63, 0.22);
   border-left-color: var(--yellow);

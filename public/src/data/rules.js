@@ -16,7 +16,9 @@ export const RULES = {
   ],
   MAX_COMBO_MULTIPLIER: 2,
 
-  STAGE_TIME: 180, // seconds per stage, counting questions + shooting
+  STAGE_TIME: 90, // seconds per stage, counting questions + shooting
+  STAGE3_TIME: 180, // the boss stage gets more time
+  FINALE_TIME: 10, // president's victory banner scene when stage 3 ends without a kill
   QUESTION_TIME: 15, // seconds per question
   QUESTION_FEEDBACK_TIME: 0.3, // slide to the next question, also the fastest possible pace
   QUESTIONS_PER_WAVE: { 1: 5, 2: 5, 3: 8 },

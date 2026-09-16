@@ -1,6 +1,6 @@
 import { BaseStage } from './BaseStage.js';
 import { Duck } from '../entities/Duck.js';
-import { RULES } from '../data/rules.js';
+import { HOW_TO_PLAY, TUTORIAL_DONE } from '../data/slides.js';
 import { W, GROUND_Y, drawText } from '../utils/draw.js';
 import { setTutorialCompleted } from '../utils/storage.js';
 
@@ -19,14 +19,7 @@ export class Tutorial extends BaseStage {
     this.game.briefingUI.show({
       title: 'HOW TO PLAY',
       subtitle: 'TUTORIAL',
-      lines: [
-        'ANSWER QUESTIONS: CORRECT = +1 BULLET',
-        'CLICK TO SHOOT DUCKS: HIT = SCORE',
-        '3 HITS IN A ROW = COMBO x1.5, 5 HITS = x2',
-        `EACH STAGE LASTS ${RULES.STAGE_TIME / 60}:00 (QUESTIONS + SHOOTING)`,
-        'ESC = PAUSE, M = MUTE',
-        'NOW: SHOOT ONE PRACTICE DUCK',
-      ],
+      slides: HOW_TO_PLAY,
       button: 'START TUTORIAL',
       onContinue: () => this.begin(),
     });
@@ -65,8 +58,8 @@ export class Tutorial extends BaseStage {
       if (this.timer <= 0) {
         this.phase = 'done';
         this.game.briefingUI.show({
-          title: 'GOOD SHOT!',
-          lines: ['THAT DUCK WAS WORTH 100 POINTS.', 'THE REAL GAME STARTS NOW.'],
+          title: 'TUTORIAL DONE',
+          slides: TUTORIAL_DONE,
           button: 'START GAME',
           onContinue: () => this.game.startRun(),
         });

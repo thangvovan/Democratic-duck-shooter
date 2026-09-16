@@ -1,8 +1,10 @@
 import { WaveStage } from './WaveStage.js';
 import { EnemyFire } from './EnemyFire.js';
+import { Finale } from './Finale.js';
 import { drawPodium } from './backgrounds.js';
 import { STATES } from '../game/GameState.js';
 import { RULES } from '../data/rules.js';
+import { STAGE_SLIDES } from '../data/slides.js';
 import { Bodyguard } from '../entities/Bodyguard.js';
 import { PresidentDuck, PODIUM } from '../entities/PresidentDuck.js';
 import { W } from '../utils/draw.js';
@@ -22,14 +24,8 @@ export class Stage3 extends WaveStage {
       shootingState: STATES.STAGE_3_BOSS,
       wrongText: '+1 BODYGUARD BULLET',
       ducksLeave: false,
-      briefing: [
-        `${RULES.QUESTIONS_PER_WAVE[3]} QUESTIONS PER WAVE`,
-        'CORRECT = +1 BULLET FOR YOU, WRONG = +1 FOR THE BODYGUARDS',
-        `SHOOT ${RULES.BODYGUARDS_PER_CYCLE} BODYGUARDS TO DROP THE PRESIDENT'S SHIELD`,
-        `SHIELD COMES BACK WHEN YOU RUN OUT OF AMMO OR AFTER ${RULES.PRESIDENT_SHIELD_COOLDOWN}S (AMMO RESETS TO 0)`,
-        'BODYGUARDS WARN FAST AND SHOOT FAST. OUT OF AMMO = THEY ALL FIRE AT ONCE',
-        `YOU HAVE ${RULES.STAGE3_PLAYER_HP} HP. HIT PRESIDENT DUCK BEFORE TIME RUNS OUT!`,
-      ],
+      stageTime: RULES.STAGE3_TIME,
+      briefing: STAGE_SLIDES[3],
     });
     this.president = new PresidentDuck();
     this.boss = 'offstage'; // offstage | arrive | guards | vulnerable | defeated
@@ -37,6 +33,7 @@ export class Stage3 extends WaveStage {
     this.shieldTimer = 0;
     this.clearTimer = 0;
     this.pendingShieldMessage = null;
+    this.finale = null;
     // Bodyguards warn for a shorter time and shoot faster bullets than the cops.
     this.enemyFire = new EnemyFire(game, {
       hp: RULES.STAGE3_PLAYER_HP,
@@ -129,6 +126,7 @@ export class Stage3 extends WaveStage {
     super.update(dt);
     const { effects, audio } = this.game;
     this.president.update(dt);
+    this.finale?.update(dt);
 
     const armedGuards = this.guards.filter((g) => g.alive && !g.entering);
     this.enemyFire.update(dt, {
@@ -196,28 +194,30 @@ export class Stage3 extends WaveStage {
     this.pendingShieldMessage = null;
   }
 
+  // The president survived: he takes the stage for his banner moment before the result screen.
+  startFinale(headline, sub) {
+    this.finale = new Finale(this.game, this.president);
+    this.president.celebrate();
+    for (const guard of this.guards) {
+      guard.cancelAim();
+      if (guard.alive) guard.leave(); // clear the stage for the banner
+    }
+    this.enemyFire.clear();
+    this.showPlayer = false; // the shooter steps out of the shot
+    this.hideHud = true;
+    this.timer = RULES.FINALE_TIME;
+    this.game.effects.showMessage(headline, { sub, color: '#ff5a5a', duration: 2.4, size: 24 });
+  }
+
   onPlayerDown() {
     this.phase = 'dead';
-    this.timer = 2.8;
-    for (const guard of this.guards) guard.cancelAim();
-    this.game.effects.showMessage('THE BODYGUARDS GOT YOU!', {
-      sub: 'PROTECT THE PRESIDENT!',
-      color: '#ff3b3b',
-      duration: 2.8,
-      size: 26,
-    });
     this.game.audio.play('gameOver');
+    this.startFinale('THE BODYGUARDS GOT YOU!', 'THE PRESIDENT IS SAFE');
   }
 
   onTimeUp() {
-    this.president.escape();
     this.game.audio.play('bossEscape');
-    this.game.effects.showMessage('THE PRESIDENT HAS ESCAPED!', {
-      sub: "TIME'S UP",
-      color: '#ff5a5a',
-      duration: 2.4,
-      size: 24,
-    });
+    this.startFinale("TIME'S UP!", 'THE PRESIDENT SURVIVED');
   }
 
   onStageFinished() {
@@ -265,6 +265,7 @@ export class Stage3 extends WaveStage {
   }
 
   renderEntities(ctx) {
+    this.finale?.render(ctx); // banner hangs behind everyone
     const behind = this.president.atPodium;
     if (behind) this.president.render(ctx);
     drawPodium(ctx);

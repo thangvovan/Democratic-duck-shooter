@@ -2,6 +2,7 @@ import { WaveStage } from './WaveStage.js';
 import { EnemyFire } from './EnemyFire.js';
 import { STATES } from '../game/GameState.js';
 import { RULES } from '../data/rules.js';
+import { STAGE_SLIDES } from '../data/slides.js';
 import { PoliceDuck } from '../entities/PoliceDuck.js';
 import { W, GROUND_Y } from '../utils/draw.js';
 import { rand } from '../utils/math.js';
@@ -20,14 +21,7 @@ export class Stage2 extends WaveStage {
       questionState: STATES.STAGE_2_QUESTIONS,
       shootingState: STATES.STAGE_2_SHOOTING,
       wrongText: '+1 ENEMY BULLET',
-      briefing: [
-        'THE DUCK COPS SHOOT BACK!',
-        'CORRECT ANSWER = +1 BULLET FOR YOU',
-        'WRONG ANSWER = +1 BULLET FOR THE COPS',
-        'SHOOT INCOMING BULLETS TO BLOCK THEM',
-        'OUT OF AMMO? THE COPS UNLOAD EVERYTHING AT ONCE',
-        `YOU HAVE ${RULES.STAGE2_PLAYER_HP} HP. 0 HP = ARRESTED`,
-      ],
+      briefing: STAGE_SLIDES[2],
     });
     this.enemyAmmo = 0;
     this.respawnTimer = 0;

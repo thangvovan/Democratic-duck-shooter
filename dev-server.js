@@ -10,6 +10,7 @@ import sessionHandler from './api/session.js';
 import scoresHandler from './api/scores.js';
 import leaderboardHandler from './api/leaderboard/index.js';
 import playerHandler from './api/leaderboard/[nickname].js';
+import progressHandler from './api/progress.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -50,6 +51,7 @@ function readBody(req) {
 function route(pathname) {
   if (pathname === '/api/session') return { handler: sessionHandler };
   if (pathname === '/api/scores') return { handler: scoresHandler };
+  if (pathname === '/api/progress') return { handler: progressHandler };
   if (pathname === '/api/leaderboard' || pathname === '/api/leaderboard/') return { handler: leaderboardHandler };
   const match = pathname.match(/^\/api\/leaderboard\/([^/]+)$/);
   if (match) {

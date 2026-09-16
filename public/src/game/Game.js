@@ -24,7 +24,8 @@ import { LeaderboardUI } from '../ui/Leaderboard.js';
 import { ResultScreen } from '../ui/ResultScreen.js';
 import { renderHud, renderCrosshair } from '../ui/HUD.js';
 
-import { createSession, submitScore } from '../api/leaderboard.js';
+import { createSession, submitScore, sendProgress } from '../api/leaderboard.js';
+import { HOW_TO_PLAY } from '../data/slides.js';
 
 export class Game {
   constructor(canvas, uiRoot) {
@@ -54,6 +55,7 @@ export class Game {
     this.menu = new Menu(uiRoot, {
       onPlay: () => this.changeState(STATES.PLAYER_NAME),
       onLeaderboard: () => this.openLeaderboard(STATES.MENU),
+      onHowTo: () => this.briefingUI.show({ title: 'HOW TO PLAY', slides: HOW_TO_PLAY, button: 'BACK' }),
       onToggleMute: () => this.toggleMute(),
       onNameConfirmed: (name) => this.onNameConfirmed(name),
       onBackToMenu: () => this.changeState(STATES.MENU),
@@ -100,17 +102,26 @@ export class Game {
     window.addEventListener('keydown', (e) => {
       const typing = e.target instanceof HTMLInputElement;
       if (e.key === 'Escape') {
-        if (this.state === STATES.PLAYER_NAME) this.changeState(STATES.MENU);
+        if (this.briefingUI.visible && !GAMEPLAY_STATES.has(this.state)) this.briefingUI.hide();
+        else if (this.state === STATES.PLAYER_NAME) this.changeState(STATES.MENU);
         else if (this.state === STATES.LEADERBOARD) this.closeLeaderboard();
         else this.setPaused(!this.paused);
         return;
       }
       if (typing || e.repeat) return;
-      // Buttons already activate on Enter natively; only handle Enter when focus is elsewhere.
-      if (e.key === 'Enter' && this.briefingUI.visible && !this.paused && !(e.target instanceof HTMLButtonElement)) {
-        e.preventDefault();
-        this.briefingUI.continue();
-        return;
+      // Slides: arrows page through, Enter advances (buttons already handle Enter natively).
+      if (this.briefingUI.visible && !this.paused) {
+        const onButton = e.target instanceof HTMLButtonElement;
+        if (e.key === 'ArrowRight' || (e.key === 'Enter' && !onButton)) {
+          e.preventDefault();
+          this.briefingUI.next();
+          return;
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.briefingUI.back();
+          return;
+        }
       }
       if (e.key === 'm' || e.key === 'M') this.toggleMute();
       else if (!this.paused && QUESTION_STATES.has(this.state)) this.questionUI.handleKey(e.key);
@@ -178,8 +189,21 @@ export class Game {
     this.score.reset();
     this.questions.reset();
     this.requestSession();
+    this.reportProgress(1);
     if (!this.changeState(STATES.STAGE_1_QUESTIONS)) return;
     this.setStage(new Stage1(this));
+  }
+
+  // Tells the live scoreboard that this player is in a run (start = 0 points, then after each stage).
+  async reportProgress(stage, { done = false } = {}) {
+    if (!this.nickname) return;
+    const token = await this.sessionPromise;
+    if (!token) return;
+    try {
+      await sendProgress({ token, nickname: this.nickname, score: this.score.score, stage, done });
+    } catch {
+      /* the live board is optional */
+    }
   }
 
   requestSession() {
@@ -189,9 +213,11 @@ export class Game {
 
   completeStage() {
     if (this.stage instanceof Stage1) {
+      this.reportProgress(2);
       this.changeState(STATES.STAGE_2_QUESTIONS);
       this.setStage(new Stage2(this));
     } else if (this.stage instanceof Stage2) {
+      this.reportProgress(3);
       this.changeState(STATES.STAGE_3_QUESTIONS);
       this.setStage(new Stage3(this));
     }
@@ -239,6 +265,7 @@ export class Game {
     } catch (err) {
       const message = err.status === 429 ? 'TOO MANY SUBMISSIONS. TRY LATER.' : `SCORE NOT SUBMITTED: ${String(err.message).toUpperCase()}`;
       this.resultScreen.setError(result.runId, message);
+      this.reportProgress(0, { done: true }); // drop the "playing" row anyway
     }
   }
 
@@ -252,6 +279,7 @@ export class Game {
   }
 
   quitToMenu() {
+    if (GAMEPLAY_STATES.has(this.state)) this.reportProgress(0, { done: true });
     this.setPaused(false);
     this.changeState(STATES.MENU);
   }
@@ -302,7 +330,7 @@ export class Game {
     ctx.restore();
 
     this.effects.renderOverlay(ctx);
-    if (stage) renderHud(ctx, stage.getHud(), this);
+    if (stage && !stage.hideHud) renderHud(ctx, stage.getHud(), this);
 
     const aiming = Boolean(stage?.canShoot()) && !this.paused;
     if (aiming !== this.aimingClass) {

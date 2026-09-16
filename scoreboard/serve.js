@@ -24,20 +24,42 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8',
 };
 
-const getStore = USE_REDIS ? (await import('../lib/store.js')).getStore : null;
+const { getStore, LIVE_MAX_AGE_MS } = await import('../lib/store.js');
 
+// Finished scores + players currently in a run (they appear the moment they start, with 0 points).
 async function readEntries() {
-  if (USE_REDIS) return getStore().top(LIMIT);
-  // Local file mode: re-read every poll so writes from a running game server show up.
+  const { finished, live } = USE_REDIS ? await readRedis() : await readFile();
+
+  const byName = new Map();
+  for (const entry of finished) byName.set(entry.nickname, { nickname: entry.nickname, score: entry.score, live: false });
+  for (const entry of live) {
+    byName.set(entry.nickname, { nickname: entry.nickname, score: entry.score, live: true, stage: entry.stage ?? 0 });
+  }
+
+  return [...byName.values()]
+    .sort((a, b) => b.score - a.score || a.nickname.localeCompare(b.nickname))
+    .slice(0, LIMIT)
+    .map((entry, i) => ({ rank: i + 1, ...entry }));
+}
+
+async function readRedis() {
+  const store = getStore();
+  const [finished, live] = await Promise.all([store.top(LIMIT), store.liveList()]);
+  return { finished, live };
+}
+
+// Local file mode: re-read every poll so writes from a running game server show up.
+async function readFile() {
   try {
     const data = JSON.parse(await fs.readFile(SCORES_FILE, 'utf8'));
-    return (data.best || [])
-      .sort((a, b) => b.score - a.score || String(a.createdAt).localeCompare(String(b.createdAt)))
-      .slice(0, LIMIT)
-      .map((record, i) => ({ rank: i + 1, nickname: record.nickname, score: record.score }));
+    const now = Date.now();
+    return {
+      finished: (data.best || []).map((r) => ({ nickname: r.nickname, score: r.score })),
+      live: (data.live || []).filter((entry) => now - entry.at <= LIVE_MAX_AGE_MS),
+    };
   } catch (err) {
     if (err.code !== 'ENOENT') console.error('[scoreboard]', err.message);
-    return [];
+    return { finished: [], live: [] };
   }
 }
 

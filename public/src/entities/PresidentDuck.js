@@ -47,6 +47,12 @@ export class PresidentDuck {
     this.state = 'hiding';
   }
 
+  // Survived stage 3: walk to the middle of the stage and raise a wing.
+  celebrate() {
+    this.state = 'celebrating';
+    this.timer = 0;
+  }
+
   becomeTarget() {
     this.state = 'running';
     this.y = PODIUM.y - 20;
@@ -121,6 +127,13 @@ export class PresidentDuck {
           this.pickWaypoint();
         }
         break;
+      case 'celebrating':
+        // Step out in front of the podium so nothing covers him.
+        this.timer += dt;
+        if (!this.moveTowards(W / 2 - 210, GROUND_Y - 30, 300, dt)) break;
+        this.facing = 1;
+        this.y = GROUND_Y - 30 + Math.sin(this.time * 3) * 4;
+        break;
       case 'escaping':
         this.flap += dt * 26;
         if (this.moveTowards(this.waypoint.x, this.waypoint.y, 950, dt)) this.state = 'gone';
@@ -150,6 +163,7 @@ export class PresidentDuck {
     if (this.state === 'offstage' || this.state === 'gone') return;
     const running = this.state === 'running' || this.state === 'escaping';
     const scared = this.state === 'hiding' || this.state === 'escaping' || this.state === 'arriving';
+    const celebrating = this.state === 'celebrating';
     const bob = running ? Math.abs(Math.sin(this.time * 18)) * -6 : 0;
 
     drawDuck(ctx, {
@@ -157,7 +171,8 @@ export class PresidentDuck {
       y: this.y + bob,
       size: this.size,
       facing: this.facing,
-      flap: Math.sin(this.flap) * (running || scared ? 0.9 : 0.25),
+      // Celebrating: wing held up in the air, with a small victory wave.
+      flap: celebrating ? -1.35 + Math.sin(this.time * 4) * 0.12 : Math.sin(this.flap) * (running || scared ? 0.9 : 0.25),
       palette: PALETTES.president,
       accessory: 'president',
       scared,

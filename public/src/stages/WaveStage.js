@@ -13,7 +13,7 @@ export class WaveStage extends BaseStage {
     this.ammo = 0;
     this.phase = 'briefing';
     this.timer = 0;
-    this.stageTime = RULES.STAGE_TIME;
+    this.stageTime = cfg.stageTime ?? RULES.STAGE_TIME;
     this.waveKills = 0;
     this.ducks = [];
   }
@@ -22,7 +22,7 @@ export class WaveStage extends BaseStage {
     this.game.briefingUI.show({
       title: this.cfg.label,
       subtitle: this.cfg.tagline,
-      lines: this.cfg.briefing,
+      slides: this.cfg.briefing,
       button: 'START STAGE',
       onContinue: () => this.startIntro(),
     });

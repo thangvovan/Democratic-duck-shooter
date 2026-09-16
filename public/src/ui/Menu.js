@@ -26,31 +26,10 @@ export class Menu {
         { class: 'menu-buttons' },
         h('button', { class: 'btn btn-primary', type: 'button', text: 'PLAY', onclick: () => handlers.onPlay() }),
         h('button', { class: 'btn', type: 'button', text: 'LEADERBOARD', onclick: () => handlers.onLeaderboard() }),
-        h('button', { class: 'btn', type: 'button', text: 'HOW TO PLAY', onclick: () => this.showHowTo() }),
+        h('button', { class: 'btn', type: 'button', text: 'HOW TO PLAY', onclick: () => handlers.onHowTo() }),
         muteButton(),
       ),
       h('p', { class: 'footnote', text: 'A PARODY GAME. NO REAL DUCKS WERE HARMED.' }),
-    );
-
-    this.howTo = screen(
-      'modal-screen',
-      h(
-        'div',
-        { class: 'panel' },
-        h('h2', { text: 'HOW TO PLAY' }),
-        h(
-          'ol',
-          { class: 'howto-list' },
-          h('li', { text: 'ANSWER QUESTIONS. CORRECT = +1 BULLET.' }),
-          h('li', { text: 'CLICK TO SHOOT DUCKS. HIT = POINTS. NO TIME LIMIT WHILE AIMING.' }),
-          h('li', { text: 'EACH STAGE LASTS 3:00, QUESTIONS AND SHOOTING INCLUDED.' }),
-          h('li', { text: '3 HITS IN A ROW = COMBO x1.5, 5 HITS = x2.' }),
-          h('li', { text: 'STAGE 2: WRONG ANSWERS ARM THE COPS. SHOOT THEIR BULLETS TO BLOCK.' }),
-          h('li', { text: 'STAGE 3: DOWN 3 BODYGUARDS TO DROP THE SHIELD, THEN HIT PRESIDENT DUCK.' }),
-        ),
-        h('p', { class: 'hint', text: 'ESC = PAUSE   M = MUTE   1-4 / A-D = ANSWER' }),
-        h('button', { class: 'btn', type: 'button', text: 'BACK', onclick: () => this.showMain() }),
-      ),
     );
 
     this.nameInput = h('input', {
@@ -108,7 +87,7 @@ export class Menu {
       ),
     );
 
-    root.append(this.main, this.howTo, this.name, this.pause);
+    root.append(this.main, this.name, this.pause);
   }
 
   setMuted(muted) {
@@ -117,18 +96,12 @@ export class Menu {
 
   hideAll() {
     this.main.hidden = true;
-    this.howTo.hidden = true;
     this.name.hidden = true;
   }
 
   showMain() {
     this.hideAll();
     this.main.hidden = false;
-  }
-
-  showHowTo() {
-    this.hideAll();
-    this.howTo.hidden = false;
   }
 
   showName(prefill = '') {

@@ -8,6 +8,13 @@ const emptyEl = document.getElementById('empty');
 const rows = new Map(); // nickname -> { el, rank, score }
 const format = (n) => n.toLocaleString('en-US');
 
+function badge(stage) {
+  const el = document.createElement('span');
+  el.className = 'badge';
+  el.textContent = stage ? `PLAYING · STAGE ${stage}` : 'PLAYING';
+  return el;
+}
+
 function buildRow(entry) {
   const el = document.createElement('div');
   el.className = 'row fresh';
@@ -16,6 +23,7 @@ function buildRow(entry) {
   setTimeout(() => el.classList.remove('fresh'), 700);
   el.innerHTML = '<span class="rank"></span><span class="name"></span><span class="score"></span>';
   el.querySelector('.name').textContent = entry.nickname;
+  el.nameEl = el.querySelector('.name');
   return el;
 }
 
@@ -53,6 +61,11 @@ function render(entries) {
     }
     const el = row.el;
     el.classList.remove('up', 'down', 'scored');
+    el.classList.toggle('playing', Boolean(entry.live));
+    el.nameEl.replaceChildren(
+      document.createTextNode(entry.nickname),
+      ...(entry.live ? [badge(entry.stage)] : []),
+    );
     el.classList.toggle('top1', entry.rank === 1);
     el.classList.toggle('top2', entry.rank === 2);
     el.classList.toggle('top3', entry.rank === 3);

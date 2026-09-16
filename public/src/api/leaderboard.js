@@ -65,6 +65,11 @@ export async function createSession() {
   return data.token;
 }
 
+// Live board only: "I am playing, this is my score right now". Never touches the real leaderboard.
+export async function sendProgress(payload) {
+  return request('/api/progress', { method: 'POST', body: payload });
+}
+
 export async function submitScore(payload) {
   const data = await request('/api/scores', { method: 'POST', body: payload });
   invalidateLeaderboard();

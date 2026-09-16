@@ -265,20 +265,6 @@ h2 {
   text-shadow: 0.15cqw 0.15cqw 0 var(--ink);
 }
 
-.howto-list {
-  margin: 0;
-  padding-left: 3cqw;
-  line-height: 2;
-  font-size: 1.3cqw;
-  max-width: 60cqw;
-}
-
-.hint {
-  margin: 0;
-  font-size: 1.1cqw;
-  color: var(--blue);
-}
-
 /* ---------- Briefing ---------- */
 .briefing-screen {
   z-index: 5;
@@ -294,16 +280,44 @@ h2 {
   color: var(--blue);
 }
 
-.briefing-list {
-  margin: 0;
-  padding-left: 2.5cqw;
-  line-height: 2.1;
-  font-size: 1.3cqw;
+.slide-art {
   width: 100%;
+  max-width: 52cqw;
+  height: auto;
+  image-rendering: auto;
 }
 
-.briefing-list li::marker {
+.slide-body {
+  text-align: center;
+  min-height: 9cqh;
+}
+
+.slide-heading {
+  margin: 0 0 1cqh;
+  font-size: 1.8cqw;
   color: var(--yellow);
+}
+
+.slide-text {
+  margin: 0;
+  font-size: 1.25cqw;
+  line-height: 1.8;
+}
+
+.slide-dots {
+  display: flex;
+  gap: 0.8cqw;
+}
+
+.slide-dots .dot {
+  width: 1cqw;
+  height: 1cqw;
+  background: rgba(255, 255, 255, 0.25);
+  border: 0.2cqw solid var(--ink);
+}
+
+.slide-dots .dot.on {
+  background: var(--yellow);
 }
 
 /* ---------- Name ---------- */

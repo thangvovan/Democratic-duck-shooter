@@ -53,9 +53,10 @@ Không có Redis trên Vercel thì điểm chỉ lưu tạm trong RAM và sẽ m
 Mỗi game chỉ có 2–3 request. Gameplay (click, đạn, chuyển động) chạy hoàn toàn ở client.
 
 ### Luật chơi chính (`public/src/data/rules.js`)
-- Mỗi stage 3:00, tính cả lúc trả lời câu hỏi lẫn lúc bắn. Lúc bắn không giới hạn thời gian riêng, wave kết thúc khi hết đạn.
+- Stage 1 và 2 mỗi stage 1:30, Stage 3 là 3:00, tính cả lúc trả lời câu hỏi lẫn lúc bắn.
+- Hết giờ Stage 3 hoặc hết máu: President Duck giơ cánh ăn mừng, đàn vịt khiêng banner "MAKE AMERICA GREAT AGAIN" bay xuống, kéo dài 10 giây trước màn kết quả. Lúc bắn không giới hạn thời gian riêng, wave kết thúc khi hết đạn.
 - Mỗi câu hỏi 15 giây. Stage 1 và 2: 5 câu/wave. Stage 3: 8 câu/wave.
-- Trước mỗi stage có bảng thông báo luật riêng. Bảng cách chơi hiện trước tutorial.
+- Hướng dẫn dạng slide bấm xem tiếp (hình vẽ canvas ở trên, 1–2 dòng chữ ở dưới): HOW TO PLAY ở menu và trước tutorial (5 slide), briefing riêng trước mỗi stage (2–3 slide). Nội dung ở `public/src/data/slides.js`, hình vẽ ở `public/src/ui/slideArt.js`.
 - Stage 2: câu sai = đạn cho cảnh sát. Stage 3: câu sai = đạn cho bodyguard. Hạ 3 bodyguard thì khiên President Duck tắt; sau 50 giây bắn thì khiên hồi và có bodyguard mới.
 
 ### Câu hỏi và đáp án mã hóa
@@ -79,6 +80,7 @@ Trang riêng chỉ có bảng xếp hạng, hợp để chiếu lên màn hình 
 npm run scoreboard      # http://localhost:4000
 ```
 
+- Hiện cả **người đang chơi**: vào game là xuất hiện ngay với 0 điểm kèm nhãn `PLAYING · STAGE n`, sau mỗi stage cập nhật điểm. Điểm này **chưa qua kiểm tra** và chỉ hiện ở trang live; leaderboard chính thức trong game vẫn chỉ nhận điểm cuối game qua `/api/scores`.
 - Đọc **cùng nguồn dữ liệu với game**: dùng Redis nếu có `REDIS_URL` trong `.env` (copy đúng chuỗi `REDIS_URL` từ Vercel là xem được điểm của bản đã deploy), không thì đọc `data/scores.json`.
 - Server tự kiểm tra dữ liệu mỗi 2 giây và chỉ đẩy xuống trình duyệt khi có thay đổi, qua Server-Sent Events.
 - Đổi hạng thì hàng tự trượt sang vị trí mới, nháy xanh khi lên hạng, nháy đỏ khi xuống hạng, kèm dấu `▲`/`▼` số hạng. Người mới lọt bảng thì trượt vào từ bên phải, điểm tăng thì chạy số.

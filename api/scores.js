@@ -27,5 +27,6 @@ export default withErrors(async (req, res) => {
   if (!fresh) return sendJson(res, 409, { error: 'Score for this game was already submitted' });
 
   const { rank, best, isNewBest } = await store.submitScore(result.record);
+  await store.removeLive(result.record.nickname); // no longer "playing"
   sendJson(res, 201, { nickname: result.record.nickname, score: result.record.score, rank, best, isNewBest });
 });

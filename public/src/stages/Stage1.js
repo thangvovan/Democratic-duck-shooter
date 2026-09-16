@@ -1,6 +1,7 @@
 import { WaveStage } from './WaveStage.js';
 import { STATES } from '../game/GameState.js';
 import { RULES } from '../data/rules.js';
+import { STAGE_SLIDES } from '../data/slides.js';
 import { Duck } from '../entities/Duck.js';
 import { PALETTES } from '../entities/duckArt.js';
 import { W, GROUND_Y } from '../utils/draw.js';
@@ -20,13 +21,7 @@ export class Stage1 extends WaveStage {
       questionState: STATES.STAGE_1_QUESTIONS,
       shootingState: STATES.STAGE_1_SHOOTING,
       wrongText: 'NO BULLET',
-      briefing: [
-        `${RULES.QUESTIONS_PER_WAVE[1]} QUESTIONS PER WAVE, ${RULES.QUESTION_TIME}S EACH`,
-        'CORRECT ANSWER = +1 BULLET',
-        'SMALL DUCKS: TAKE YOUR TIME TO AIM',
-        'SHOOTING HAS NO TIME LIMIT',
-        `STAGE TIME: ${RULES.STAGE_TIME / 60}:00 (QUESTIONS + SHOOTING)`,
-      ],
+      briefing: STAGE_SLIDES[1],
     });
     this.spawnTimer = 0;
   }
