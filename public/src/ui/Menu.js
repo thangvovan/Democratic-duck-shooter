@@ -18,8 +18,8 @@ export class Menu {
       h(
         'div',
         { class: 'menu-title' },
-        h('h1', {}, h('span', { class: 'title-line' , text: 'CÙNG BẮN' }), h('span', { class: 'title-line title-accent', text: 'VỊT NÀO!' })),
-        h('p', { class: 'subtitle', text: 'TỰ DO. QUYỀN. ĐẠN. VỊT.' }),
+        h('h1', {}, h('span', { class: 'title-line' , text: 'DEMOCRATIC' }), h('span', { class: 'title-line title-accent', text: 'DUCK SHOOTER' })),
+        h('p', { class: 'subtitle', text: 'QUYỀN. TỰ DO. ĐẠN. VỊT.' }),
       ),
       h(
         'div',
@@ -29,7 +29,7 @@ export class Menu {
         h('button', { class: 'btn', type: 'button', text: 'CÁCH CHƠI', onclick: () => handlers.onHowTo() }),
         muteButton(),
       ),
-      h('p', { class: 'footnote', text: 'GAME CHÂM BIẾM. KHÔNG CON VỊT THẬT NÀO BỊ HẠI.' }),
+      h('p', { class: 'footnote', text: 'GAME TROLL. KHÔNG CON VỊT THẬT NÀO BỊ HẠI.' }),
     );
 
     this.nameInput = h('input', {
