@@ -89,7 +89,7 @@ function card(ctx, x, y, w, h, { correct = true } = {}) {
     ctx.fill();
   }
   ctx.restore();
-  drawText(ctx, correct ? 'CORRECT' : 'WRONG', x + w / 2, y + h + 16, {
+  drawText(ctx, correct ? 'ĐÚNG' : 'SAI', x + w / 2, y + h + 16, {
     size: 10,
     color: correct ? '#3ddc84' : '#ff3b3b',
   });
@@ -197,11 +197,11 @@ export const SLIDE_ART = {
   combo(ctx) {
     for (let i = 0; i < 3; i++) duck(ctx, 70 + i * 80, 60, 52, null, PALETTES.yellow);
     drawText(ctx, 'x2', 360, 62, { size: 34, color: '#ff5da2' });
-    drawText(ctx, 'HIT, HIT, HIT...', 160, 120, { size: 12, color: '#5ee7ff' });
+    drawText(ctx, 'TRÚNG, TRÚNG, TRÚNG...', 160, 120, { size: 12, color: '#5ee7ff' });
   },
 
   stages(ctx) {
-    const labels = ['SCHOOL', 'POLICE', 'PRESIDENT'];
+    const labels = ['TRƯỜNG HỌC', 'CẢNH SÁT', 'TỔNG THỐNG'];
     const art = [
       () => duck(ctx, 0, 0, 60, 'student', PALETTES.student),
       () => duck(ctx, 0, 0, 60, 'police', PALETTES.police),
@@ -219,9 +219,9 @@ export const SLIDE_ART = {
 
   controls(ctx) {
     const keys = ['1-4', 'A-D', 'ESC', 'M'];
-    const notes = ['ANSWER', 'ANSWER', 'PAUSE', 'MUTE'];
+    const notes = ['TRẢ LỜI', 'TRẢ LỜI', 'DỪNG', 'TẮT TIẾNG'];
     crosshair(ctx, 60, 60, 22);
-    drawText(ctx, 'CLICK = SHOOT', 60, 112, { size: 10 });
+    drawText(ctx, 'BẤM = BẮN', 60, 112, { size: 10 });
     keys.forEach((key, i) => {
       const x = 170 + i * 70;
       ctx.fillStyle = '#2a1b52';
@@ -257,7 +257,7 @@ export const SLIDE_ART = {
     crosshair(ctx, 200, 70, 24);
     shooter(ctx, 340, 120, 0.8);
     for (let i = 0; i < 5; i++) heart(ctx, 300 + i * 22, 30, i < 4);
-    drawText(ctx, 'BLOCKED!', 200, 124, { size: 11, color: '#5ee7ff' });
+    drawText(ctx, 'CHẶN ĐƯỢC!', 200, 124, { size: 11, color: '#5ee7ff' });
   },
 
   volley(ctx) {
@@ -267,7 +267,7 @@ export const SLIDE_ART = {
     }
     shooter(ctx, 360, 120, 0.8);
     ammoRow(ctx, 300, 34, 0, 5);
-    drawText(ctx, 'YOUR AMMO: 0', 355, 60, { size: 10, color: '#ff5a5a' });
+    drawText(ctx, 'ĐẠN CỦA BẠN: 0', 355, 60, { size: 10, color: '#ff5a5a' });
   },
 
   guards(ctx) {
@@ -280,7 +280,7 @@ export const SLIDE_ART = {
     ctx.fill();
     ctx.restore();
     for (let i = 0; i < 3; i++) duck(ctx, 100 + i * 120, 108, 52, 'bodyguard', PALETTES.bodyguard);
-    drawText(ctx, 'SHIELD', 220, 132, { size: 10, color: '#5ee7ff' });
+    drawText(ctx, 'KHIÊN', 220, 132, { size: 10, color: '#5ee7ff' });
   },
 
   shieldBack(ctx) {
@@ -294,10 +294,10 @@ export const SLIDE_ART = {
     ctx.lineTo(98, 74);
     ctx.stroke();
     ctx.restore();
-    drawText(ctx, '50s', 80, 122, { size: 12, color: '#ffd23f' });
-    drawText(ctx, 'OR', 165, 62, { size: 12 });
+    drawText(ctx, '50 GIÂY', 80, 122, { size: 12, color: '#ffd23f' });
+    drawText(ctx, 'HOẶC', 165, 62, { size: 12 });
     ammoRow(ctx, 215, 62, 0, 5);
-    drawText(ctx, 'NO AMMO', 250, 122, { size: 10, color: '#ff5a5a' });
+    drawText(ctx, 'HẾT ĐẠN', 250, 122, { size: 10, color: '#ff5a5a' });
     arrow(ctx, 306, 348, 62, '#5ee7ff');
     // President back behind his shield
     ctx.save();
@@ -316,7 +316,7 @@ export const SLIDE_ART = {
     ctx.arc(396, 62, 42, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
-    drawText(ctx, 'SHIELD', 396, 122, { size: 9, color: '#5ee7ff' });
+    drawText(ctx, 'KHIÊN', 396, 122, { size: 9, color: '#5ee7ff' });
   },
 
   goodShot(ctx) {

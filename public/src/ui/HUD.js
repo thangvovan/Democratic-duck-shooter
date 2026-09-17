@@ -78,40 +78,40 @@ export function renderHud(ctx, hud, game) {
   ctx.fillRect(0, 46, W, 3);
 
   const score = hud.score ?? game.score.displayScore;
-  drawText(ctx, 'SCORE', 16, 14, { size: 9, color: '#ffd23f', align: 'left', stroke: null });
+  drawText(ctx, 'ĐIỂM', 16, 14, { size: 9, color: '#ffd23f', align: 'left', stroke: null });
   drawText(ctx, PAD(score), 16, 32, { size: 16, align: 'left' });
 
   drawText(ctx, hud.label, W / 2, 16, { size: 12, color: '#ffffff' });
   if (hud.stageTime != null) {
-    drawText(ctx, `STAGE TIME ${formatTime(hud.stageTime)}`, W / 2, 35, {
+    drawText(ctx, `THỜI GIAN ${formatTime(hud.stageTime)}`, W / 2, 35, {
       size: 10,
       color: hud.stageTime <= 20 ? '#ff5a5a' : '#5ee7ff',
       stroke: null,
     });
   }
   if (hud.shieldTime != null) {
-    drawText(ctx, `SHIELD BACK IN ${Math.ceil(hud.shieldTime)}`, W / 2, 64, {
+    drawText(ctx, `KHIÊN HỒI SAU ${Math.ceil(hud.shieldTime)}`, W / 2, 64, {
       size: 12,
       color: hud.shieldTime <= 10 ? '#ff5a5a' : '#5ee7ff',
     });  }
 
   if (hud.ammoInfinite) {
-    drawText(ctx, 'AMMO', W - 16, 14, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
-    drawText(ctx, 'UNLIMITED', W - 16, 32, { size: 11, align: 'right' });
+    drawText(ctx, 'ĐẠN', W - 16, 14, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
+    drawText(ctx, 'VÔ HẠN', W - 16, 32, { size: 11, align: 'right' });
   } else {
     const labelX = slotRow(ctx, 'ammo', hud.ammo ?? 0, hud.ammoSlots, W - 22, 26, { fill: '#ffcf5a', tip: '#c98b2b' });
-    drawText(ctx, 'AMMO', labelX, 26, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
+    drawText(ctx, 'ĐẠN', labelX, 26, { size: 9, color: '#ffd23f', align: 'right', stroke: null });
   }
 
   let rowY = 66;
   if (hud.hp != null) {
-    drawText(ctx, 'HP', W - 16 - hud.maxHp * 20 - 8, rowY, { size: 10, align: 'right' });
+    drawText(ctx, 'MÁU', W - 16 - hud.maxHp * 20 - 8, rowY, { size: 10, align: 'right' });
     for (let i = 0; i < hud.maxHp; i++) heart(ctx, W - 26 - (hud.maxHp - 1 - i) * 20, rowY, i < hud.hp);
     rowY += 26;
   }
   if (hud.enemySlots != null) {
     const labelX = slotRow(ctx, 'enemy', hud.enemyAmmo, hud.enemySlots, W - 22, rowY, { fill: '#ff3b3b', tip: '#9d1c2c' });
-    drawText(ctx, hud.enemyLabel || 'ENEMY AMMO', labelX, rowY, { size: 9, color: '#ff8a8a', align: 'right' });
+    drawText(ctx, hud.enemyLabel || 'ĐẠN ĐỊCH', labelX, rowY, { size: 9, color: '#ff8a8a', align: 'right' });
   }
 
   if (hud.score == null && game.score.streak >= 3) {

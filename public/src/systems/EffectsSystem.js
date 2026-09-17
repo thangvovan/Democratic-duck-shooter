@@ -1,6 +1,6 @@
 // Short-lived visual effects: score popups, speech bubbles, feathers, tracers,
 // muzzle flash, screen shake and big center messages. All pools are capped.
-import { W, H, FONT, drawText, roundRectPath, wrapText } from '../utils/draw.js';
+import { W, H, FONT_BODY, drawText, roundRectPath, wrapText } from '../utils/draw.js';
 import { rand, clamp, easeOutBack, removeWhere } from '../utils/math.js';
 
 const MAX_PARTICLES = 220;
@@ -226,7 +226,7 @@ export class EffectsSystem {
 
   renderBubble(ctx, b) {
     ctx.save();
-    ctx.font = `11px ${FONT}`;
+    ctx.font = `700 14px ${FONT_BODY}`;
     if (!b.lines) b.lines = wrapText(ctx, b.text, 250);
     const lineHeight = 17;
     const width = Math.max(...b.lines.map((l) => ctx.measureText(l).width)) + 28;

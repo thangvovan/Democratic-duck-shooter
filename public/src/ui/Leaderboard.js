@@ -11,27 +11,27 @@ export class LeaderboardUI {
     this.statusEl = h('p', { class: 'lb-status' });
     this.body = h('tbody');
     this.youEl = h('p', { class: 'lb-you' });
-    this.refreshBtn = h('button', { class: 'btn btn-small', type: 'button', text: 'REFRESH', onclick: () => this.refresh() });
+    this.refreshBtn = h('button', { class: 'btn btn-small', type: 'button', text: 'LÀM MỚI', onclick: () => this.refresh() });
 
     this.el = screen(
       'modal-screen leaderboard-screen',
       h(
         'div',
         { class: 'panel lb-panel' },
-        h('h2', { text: 'LEADERBOARD' }),
+        h('h2', { text: 'BẢNG XẾP HẠNG' }),
         h(
           'div',
           { class: 'lb-table-wrap' },
           h(
             'table',
             { class: 'lb-table' },
-            h('thead', {}, h('tr', {}, h('th', { text: 'RANK' }), h('th', { text: 'PLAYER' }), h('th', { text: 'SCORE' }))),
+            h('thead', {}, h('tr', {}, h('th', { text: 'HẠNG' }), h('th', { text: 'NGƯỜI CHƠI' }), h('th', { text: 'ĐIỂM' }))),
             this.body,
           ),
         ),
         this.statusEl,
         this.youEl,
-        h('div', { class: 'row' }, this.refreshBtn, h('button', { class: 'btn', type: 'button', text: 'BACK', onclick: () => onBack() })),
+        h('div', { class: 'row' }, this.refreshBtn, h('button', { class: 'btn', type: 'button', text: 'QUAY LẠI', onclick: () => onBack() })),
       ),
     );
     root.append(this.el);
@@ -56,17 +56,17 @@ export class LeaderboardUI {
 
   async load(force) {
     const id = ++this.requestId;
-    this.statusEl.textContent = 'LOADING...';
+    this.statusEl.textContent = 'ĐANG TẢI...';
     this.youEl.textContent = '';
     try {
       const entries = await fetchLeaderboard(LIMIT, { force });
       if (id !== this.requestId) return;
       this.render(entries);
-      this.statusEl.textContent = entries.length === 0 ? 'NO SCORES YET. BE THE FIRST!' : '';
+      this.statusEl.textContent = entries.length === 0 ? 'CHƯA CÓ ĐIỂM NÀO. HÃY LÀ NGƯỜI ĐẦU TIÊN!' : '';
     } catch {
       if (id !== this.requestId) return;
       this.body.replaceChildren();
-      this.statusEl.textContent = 'LEADERBOARD UNAVAILABLE. TRY AGAIN LATER.';
+      this.statusEl.textContent = 'KHÔNG TẢI ĐƯỢC BẢNG XẾP HẠNG. HÃY THỬ LẠI SAU.';
       return;
     }
 
@@ -74,7 +74,7 @@ export class LeaderboardUI {
     try {
       const me = await fetchPlayer(this.nickname);
       if (id !== this.requestId) return;
-      this.youEl.textContent = me ? `YOUR BEST: #${me.rank} — ${formatScore(me.score)}` : `${this.nickname}: NO SCORE YET`;
+      this.youEl.textContent = me ? `KỶ LỤC CỦA BẠN: HẠNG ${me.rank} — ${formatScore(me.score)}` : `${this.nickname}: CHƯA CÓ ĐIỂM`;
     } catch {
       /* optional info */
     }

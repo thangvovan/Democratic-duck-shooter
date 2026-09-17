@@ -84,7 +84,7 @@ export class EnemyFire {
     player.hurt();
     effects.addHurtFlash();
     effects.addShake(14);
-    effects.addPopup(W / 2, GROUND_Y - 20, '-1 HP', { color: '#ff3b3b', size: 20 });
+    effects.addPopup(W / 2, GROUND_Y - 20, '-1 MÁU', { color: '#ff3b3b', size: 20 });
     audio.play('hurt');
     if (this.hp <= 0) {
       this.clear();
@@ -99,7 +99,7 @@ export class EnemyFire {
       bullet.destroyed = true;
       const { effects, audio } = this.game;
       effects.addStars(bullet.x, bullet.y, 8, '#ff7b7b');
-      effects.addPopup(bullet.x, bullet.y - 20, 'BLOCKED!', { color: '#5ee7ff', size: 12 });
+      effects.addPopup(bullet.x, bullet.y - 20, 'CHẶN!', { color: '#5ee7ff', size: 12 });
       audio.play('block');
       return true;
     }

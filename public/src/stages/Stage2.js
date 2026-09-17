@@ -13,14 +13,14 @@ const MAX_COPS = 3;
 export class Stage2 extends WaveStage {
   constructor(game) {
     super(game, {
-      label: 'STAGE 2 — POLICE',
-      tagline: 'THE DUCKS SHOOT BACK',
+      label: 'MÀN 2 — CẢNH SÁT',
+      tagline: 'VỊT BẮN DÂN',
       background: 'police',
       pool: 'police',
       questionsPerWave: RULES.QUESTIONS_PER_WAVE[2],
       questionState: STATES.STAGE_2_QUESTIONS,
       shootingState: STATES.STAGE_2_SHOOTING,
-      wrongText: '+1 ENEMY BULLET',
+      wrongText: '+1 ĐẠN CHO ĐỊCH',
       briefing: STAGE_SLIDES[2],
     });
     this.enemyAmmo = 0;
@@ -50,13 +50,13 @@ export class Stage2 extends WaveStage {
   }
 
   getRewards() {
-    return { ammo: this.ammo, enemyAmmo: this.enemyAmmo, enemyLabel: 'COP BULLETS' };
+    return { ammo: this.ammo, enemyAmmo: this.enemyAmmo, enemyLabel: 'ĐẠN CẢNH SÁT' };
   }
 
   onShootingStart() {
     const { effects, audio } = this.game;
-    effects.showMessage('SHOOT BACK!', {
-      sub: `YOU: ${this.ammo}   COPS: ${this.enemyAmmo}`,
+    effects.showMessage('BẮN!', {
+      sub: `BẠN: ${this.ammo}   CẢNH SÁT: ${this.enemyAmmo}`,
       color: this.enemyAmmo > this.ammo ? '#ff5a5a' : '#ffd23f',
       duration: 1.4,
     });
@@ -106,8 +106,8 @@ export class Stage2 extends WaveStage {
     this.phase = 'dead';
     this.timer = 2.8;
     for (const duck of this.ducks) duck.cancelAim();
-    this.game.effects.showMessage("YOU'VE BEEN ARRESTED!", {
-      sub: 'FREEDOM HAS LIMITS',
+    this.game.effects.showMessage('BẠN ĐÃ BỊ BẮT!', {
+      sub: 'TỰ DO CŨNG CÓ GIỚI HẠN',
       color: '#ff3b3b',
       duration: 2.8,
       size: 28,
@@ -154,7 +154,7 @@ export class Stage2 extends WaveStage {
       maxHp: this.enemyFire.maxHp,
       enemyAmmo: this.enemyAmmo,
       enemySlots: this.cfg.questionsPerWave,
-      enemyLabel: 'COP AMMO',
+      enemyLabel: 'ĐẠN CẢNH SÁT',
     };
   }
 }

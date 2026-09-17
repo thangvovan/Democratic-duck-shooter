@@ -59,7 +59,17 @@ Mỗi game chỉ có 2–3 request. Gameplay (click, đạn, chuyển động) c
 - Hướng dẫn dạng slide bấm xem tiếp (hình vẽ canvas ở trên, 1–2 dòng chữ ở dưới): HOW TO PLAY ở menu và trước tutorial (5 slide), briefing riêng trước mỗi stage (2–3 slide). Nội dung ở `public/src/data/slides.js`, hình vẽ ở `public/src/ui/slideArt.js`.
 - Stage 2: câu sai = đạn cho cảnh sát. Stage 3: câu sai = đạn cho bodyguard. Hạ 3 bodyguard thì khiên President Duck tắt; sau 50 giây bắn thì khiên hồi và có bodyguard mới.
 
+### Ngôn ngữ và phông chữ
+- Toàn bộ giao diện là tiếng Việt (riêng banner "MAKE AMERICA GREAT AGAIN" giữ nguyên khẩu hiệu gốc).
+- Phông: **Bungee** cho tiêu đề và chữ trên canvas, **Chakra Petch** cho câu hỏi và đoạn chữ dài. Cả hai có bộ ký tự tiếng Việt (Press Start 2P cũ thì không). `start.js` tải trước phần ký tự tiếng Việt của cả hai phông để canvas không bị lỗi dấu.
+- Tên người chơi được nhập có dấu, game tự bỏ dấu ("Thắng" → "THANG").
+
 ### Câu hỏi và đáp án mã hóa
+- Bộ câu hỏi hiện tại (60 câu) soạn từ **Giáo trình Chủ nghĩa xã hội khoa học, Chương 4** (mục I và III.1, chủ đề dân chủ), chia theo độ khó:
+  - Màn 1 (15 câu): dễ.
+  - Màn 2 (15 câu): trung bình.
+  - Màn 3 (30 câu): khó, có câu bẫy (hỏi "KHÔNG", phương án đúng ở khía cạnh khác, mốc thời gian/sự kiện gần giống nhau).
+- Các phương án được viết dài ngắn tương đương để không đoán được đáp án theo độ dài.
 - Sửa câu hỏi trong `data-src/questions.source.js` (đáp án dạng thường, **không** được serve cho người chơi).
 - Chạy `npm run encode` (tự chạy trong `npm run build`) để sinh `public/src/data/questions.js`: mỗi câu chỉ có `answerCode`.
 - Đáp án = `FNV-1a(question + code) % 4`, là index trong hash table 4 ô (`public/src/data/answerHash.js`), mất vài micro giây mỗi câu.

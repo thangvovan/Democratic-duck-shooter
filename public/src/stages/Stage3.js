@@ -15,14 +15,14 @@ import { rand } from '../utils/math.js';
 export class Stage3 extends WaveStage {
   constructor(game) {
     super(game, {
-      label: 'STAGE 3 — PRESIDENT',
-      tagline: 'BOSS FIGHT',
+      label: 'MÀN 3 — TỔNG THỐNG',
+      tagline: 'ÁM SÁT TRÙM',
       background: 'government',
       pool: 'president',
       questionsPerWave: RULES.QUESTIONS_PER_WAVE[3],
       questionState: STATES.STAGE_3_QUESTIONS,
       shootingState: STATES.STAGE_3_BOSS,
-      wrongText: '+1 BODYGUARD BULLET',
+      wrongText: '+1 ĐẠN CHO VỆ SĨ',
       ducksLeave: false,
       stageTime: RULES.STAGE3_TIME,
       briefing: STAGE_SLIDES[3],
@@ -71,7 +71,7 @@ export class Stage3 extends WaveStage {
   }
 
   getRewards() {
-    return { ammo: this.ammo, enemyAmmo: this.enemyAmmo, enemyLabel: 'GUARD BULLETS' };
+    return { ammo: this.ammo, enemyAmmo: this.enemyAmmo, enemyLabel: 'ĐẠN VỆ SĨ' };
   }
 
   spawnGuards() {
@@ -93,8 +93,8 @@ export class Stage3 extends WaveStage {
     this.boss = 'vulnerable';
     this.shieldTimer = RULES.PRESIDENT_SHIELD_COOLDOWN;
     this.president.becomeTarget();
-    this.game.effects.showMessage('SHIELD DOWN!', {
-      sub: `SHOOT THE PRESIDENT! ${RULES.PRESIDENT_SHIELD_COOLDOWN} SECONDS`,
+    this.game.effects.showMessage('KHIÊN ĐÃ VỠ!', {
+      sub: `BẮN TRÙM! CÒN ${RULES.PRESIDENT_SHIELD_COOLDOWN} GIÂY`,
       duration: 1.6,
       size: 30,
     });
@@ -106,15 +106,15 @@ export class Stage3 extends WaveStage {
     this.boss = 'arrive';
     this.pendingShieldMessage = reason; // re-shown after the wave-end message
     this.president.retreat();
-    this.game.effects.showMessage('SHIELD RESTORED!', { sub: reason, color: '#5ee7ff', duration: 2 });
+    this.game.effects.showMessage('KHIÊN ĐÃ HỒI!', { sub: reason, color: '#5ee7ff', duration: 2 });
     this.game.audio.play('bossSpawn');
   }
 
   onShootingStart() {
     const { effects, audio } = this.game;
     const vulnerable = this.boss === 'vulnerable';
-    effects.showMessage(vulnerable ? 'SHOOT THE PRESIDENT!' : 'SHOOT!', {
-      sub: `YOU: ${this.ammo}   GUARDS: ${this.enemyAmmo}`,
+    effects.showMessage(vulnerable ? 'BẮN TRÙM!' : 'BẮN!', {
+      sub: `BẠN: ${this.ammo}   VỆ SĨ: ${this.enemyAmmo}`,
       color: this.enemyAmmo > this.ammo ? '#ff5a5a' : '#ffd23f',
       duration: 1.4,
     });
@@ -140,7 +140,7 @@ export class Stage3 extends WaveStage {
     switch (stageActive ? this.boss : null) {
       case 'arrive':
         if (this.president.state === 'podium') {
-          effects.addBubble(PODIUM.x, PODIUM.y - 30, 'PROTECT THE PRESIDENT!', { speaker: 'duck', life: 2 });
+          effects.addBubble(PODIUM.x, PODIUM.y - 30, 'BẢO VỆ TỔNG THỐNG!', { speaker: 'duck', life: 2 });
           audio.play('quack');
           this.spawnGuards();
         }
@@ -162,7 +162,7 @@ export class Stage3 extends WaveStage {
           if (this.shieldTimer <= 0) {
             // Time's up: the shield returns and the player's remaining ammo is lost.
             this.ammo = 0;
-            this.restoreShield("TIME'S UP! AMMO RESET TO 0");
+            this.restoreShield('HẾT GIỜ!');
           }
         }
         break;
@@ -180,7 +180,7 @@ export class Stage3 extends WaveStage {
 
   updateShooting() {
     if (this.phase !== 'shooting') return false;
-    if (this.boss === 'vulnerable' && this.ammo === 0) this.restoreShield('YOU RAN OUT OF AMMO');
+    if (this.boss === 'vulnerable' && this.ammo === 0) this.restoreShield('BẠN ĐÃ HẾT ĐẠN');
     const guardsAlive = this.guards.some((g) => g.alive);
     const someoneAiming = this.guards.some((g) => g.aiming);
     // Bodyguard ammo is useless once every bodyguard is down.
@@ -190,7 +190,7 @@ export class Stage3 extends WaveStage {
 
   onWaveEnd() {
     if (!this.pendingShieldMessage) return;
-    this.game.effects.showMessage('SHIELD RESTORED!', { sub: this.pendingShieldMessage, color: '#5ee7ff', duration: 2 });
+    this.game.effects.showMessage('KHIÊN ĐÃ HỒI!', { sub: this.pendingShieldMessage, color: '#5ee7ff', duration: 2 });
     this.pendingShieldMessage = null;
   }
 
@@ -212,12 +212,12 @@ export class Stage3 extends WaveStage {
   onPlayerDown() {
     this.phase = 'dead';
     this.game.audio.play('gameOver');
-    this.startFinale('THE BODYGUARDS GOT YOU!', 'THE PRESIDENT IS SAFE');
+    this.startFinale('BẠN ĐÃ BỊ HẠ!', 'TRÙM VẪN AN TOÀN...');
   }
 
   onTimeUp() {
     this.game.audio.play('bossEscape');
-    this.startFinale("TIME'S UP!", 'THE PRESIDENT SURVIVED');
+    this.startFinale('HẾT GIỜ!', 'TRÙM VẪN AN TOÀN...');
   }
 
   onStageFinished() {
@@ -250,7 +250,7 @@ export class Stage3 extends WaveStage {
         effects.addFeathers(px, py, '#1f4fb8', 20);
         effects.addShake(12);
         jokes.tell();
-        effects.showMessage('PRESIDENT DUCK DEFEATED!', { sub: 'FREEDOM WINS... APPARENTLY', duration: 3, size: 26 });
+        effects.showMessage('ĐÃ HẠ TRÙM!', { sub: 'TỰ DO CHIẾN THẮNG... CHẮC VẬY', duration: 3, size: 26 });
         audio.play('victory');
         for (const guard of this.guards) guard.cancelAim();
         this.enemyFire.clear();
@@ -258,7 +258,7 @@ export class Stage3 extends WaveStage {
         this.timer = 3.3;
         return { hit: true };
       }
-      effects.addPopup(x, y - 20, 'PROTECTED!', { color: '#5ee7ff', size: 14 });
+      effects.addPopup(x, y - 20, 'ĐƯỢC BẢO VỆ!', { color: '#5ee7ff', size: 14 });
       audio.play('block');
     }
     return { hit: false };
@@ -285,7 +285,7 @@ export class Stage3 extends WaveStage {
       maxHp: this.enemyFire.maxHp,
       enemyAmmo: this.enemyAmmo,
       enemySlots: this.cfg.questionsPerWave,
-      enemyLabel: 'GUARD AMMO',
+      enemyLabel: 'ĐẠN VỆ SĨ',
       shieldTime: this.boss === 'vulnerable' ? Math.max(0, this.shieldTimer) : null,    };
   }
 }

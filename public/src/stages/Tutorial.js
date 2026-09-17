@@ -7,7 +7,7 @@ import { setTutorialCompleted } from '../utils/storage.js';
 // One-time tutorial: how-to-play panel first, then a single slow duck to shoot.
 export class Tutorial extends BaseStage {
   constructor(game) {
-    super(game, { label: 'TUTORIAL', background: 'range' });
+    super(game, { label: 'HƯỚNG DẪN', background: 'range' });
     this.countsStats = false;
     this.phase = 'briefing';
     this.timer = 0;
@@ -17,10 +17,10 @@ export class Tutorial extends BaseStage {
 
   enter() {
     this.game.briefingUI.show({
-      title: 'HOW TO PLAY',
-      subtitle: 'TUTORIAL',
+      title: 'CÁCH CHƠI',
+      subtitle: 'HƯỚNG DẪN',
       slides: HOW_TO_PLAY,
-      button: 'START TUTORIAL',
+      button: 'BẮT ĐẦU HƯỚNG DẪN',
       onContinue: () => this.begin(),
     });
   }
@@ -28,7 +28,7 @@ export class Tutorial extends BaseStage {
   begin() {
     this.phase = 'intro';
     this.timer = 1.2;
-    this.game.effects.showMessage('TUTORIAL', { sub: 'WELCOME TO THE SHOOTING RANGE', duration: 1.3 });
+    this.game.effects.showMessage('HƯỚNG DẪN', { sub: 'CHÀO MỪNG ĐẾN TRƯỜNG BẮN', duration: 1.3 });
   }
 
   exit() {
@@ -58,9 +58,9 @@ export class Tutorial extends BaseStage {
       if (this.timer <= 0) {
         this.phase = 'done';
         this.game.briefingUI.show({
-          title: 'TUTORIAL DONE',
+          title: 'XONG PHẦN HƯỚNG DẪN',
           slides: TUTORIAL_DONE,
-          button: 'START GAME',
+          button: 'VÀO GAME',
           onContinue: () => this.game.startRun(),
         });
       }
@@ -83,13 +83,13 @@ export class Tutorial extends BaseStage {
       effects.addPopup(this.duck.x, this.duck.y - 30, '+100', { size: 22 });
       effects.addFeathers(this.duck.x, this.duck.y, this.duck.palette.body, 16);
       jokes.tell();
-      effects.showMessage('GOOD SHOT!', { sub: 'EVERY DUCK = POINTS', duration: 1.8 });
+      effects.showMessage('BẮN HAY LẮM!', { sub: 'MỖI CON VỊT = ĐIỂM', duration: 1.8 });
       setTutorialCompleted();
       this.phase = 'hit';
       this.timer = 1.8;
       return { hit: true };
     }
-    effects.addPopup(x, y, 'MISSED! TRY AGAIN', { color: '#ffffff', size: 12, life: 0.8 });
+    effects.addPopup(x, y, 'TRƯỢT RỒI! THỬ LẠI', { color: '#ffffff', size: 12, life: 0.8 });
     return { hit: false, neutral: true };
   }
 
@@ -100,11 +100,11 @@ export class Tutorial extends BaseStage {
   renderOverlay(ctx) {
     if (this.phase !== 'shoot' || !this.duck) return;
     if (Math.floor(this.time * 2.5) % 2 === 0) {
-      drawText(ctx, 'CLICK TO SHOOT', W / 2, 80, { size: 26, color: '#ffd23f' });
+      drawText(ctx, 'BẤM ĐỂ BẮN', W / 2, 80, { size: 26, color: '#ffd23f' });
     }
     const bob = Math.sin(this.time * 6) * 6;
     const { x, y, size } = this.duck;
-    drawText(ctx, 'TARGET', x, y - size - 34 + bob, { size: 12, color: '#ff5a5a' });
+    drawText(ctx, 'MỤC TIÊU', x, y - size - 34 + bob, { size: 12, color: '#ff5a5a' });
     ctx.save();
     ctx.fillStyle = '#ff5a5a';
     ctx.strokeStyle = '#1a1030';

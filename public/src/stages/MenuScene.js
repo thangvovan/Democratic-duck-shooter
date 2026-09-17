@@ -35,7 +35,7 @@ export class MenuScene {
   }
 
   render(ctx) {
-    const bg = getBackground('range', this.game.dpr);
+    const bg = getBackground('menu', this.game.dpr);
     bg.drawBack(ctx, this.time);
     for (const duck of this.ducks) duck.render(ctx);
     bg.drawFront(ctx, this.time);

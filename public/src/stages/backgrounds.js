@@ -100,7 +100,7 @@ function sign(ctx, x, y, w, h, text, bg = '#ffd23f', color = '#1a1030', size = 1
 
 const PAINTERS = {
   range: {
-    back(ctx) {
+    back(ctx, withSign = true) {
       ctx.fillStyle = '#7a4a2a';
       ctx.fillRect(0, 0, W, H);
       for (let x = 0; x < W; x += 48) {
@@ -117,7 +117,7 @@ const PAINTERS = {
         ctx.arc(i * 60 + 30, 46, 30, 0, Math.PI);
         ctx.fill();
       }
-      sign(ctx, W / 2, 118, 380, 50, 'SHOOTING RANGE', '#ffd23f', OUT, 18);
+      if (withSign) sign(ctx, W / 2, 118, 380, 50, 'SHOOTING RANGE', '#ffd23f', OUT, 18);
       // Targets
       for (const tx of [200, 480, 760]) {
         ctx.fillStyle = '#4a2c18';
@@ -156,6 +156,13 @@ const PAINTERS = {
         ctx.fillRect(x, GROUND_Y + 30, 60, 8);
       }
     },
+    animate() {},
+  },
+
+  // Shooting range without the sign, so it does not clash with the menu title.
+  menu: {
+    back: (ctx) => PAINTERS.range.back(ctx, false),
+    front: (ctx) => PAINTERS.range.front(ctx),
     animate() {},
   },
 
@@ -331,7 +338,7 @@ const PAINTERS = {
       ctx.fillStyle = OUT;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      for (let i = -2; i <= 2; i++) ctx.fillText('POLICE LINE - DO NOT CROSS', i * 330, 1);
+      for (let i = -2; i <= 2; i++) ctx.fillText('DO NOT CROSS', i * 330, 1);
       ctx.restore();
     },
     animate(ctx, t) {

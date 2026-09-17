@@ -1,31 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LIVE LEADERBOARD — LET'S SHOOT THE DUCK</title>
+    <title>BẢNG XẾP HẠNG TRỰC TIẾP — CÙNG BẮN VỊT NÀO</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
       <header>
-        <h1><span>LET'S SHOOT THE DUCK</span><em>LIVE LEADERBOARD</em></h1>
-        <p id="status" class="status connecting">CONNECTING…</p>
+        <h1><span>CÙNG BẮN VỊT NÀO!</span><em>BẢNG XẾP HẠNG TRỰC TIẾP</em></h1>
+        <p id="status" class="status connecting">ĐANG KẾT NỐI…</p>
       </header>
 
       <section class="board">
         <div class="board-head">
-          <span>RANK</span><span>PLAYER</span><span>SCORE</span>
+          <span>HẠNG</span><span>NGƯỜI CHƠI</span><span>ĐIỂM</span>
         </div>
         <div id="rows" class="rows"></div>
-        <p id="empty" class="empty">NO SCORES YET. BE THE FIRST!</p>
+        <p id="empty" class="empty">CHƯA CÓ ĐIỂM NÀO. HÃY LÀ NGƯỜI ĐẦU TIÊN!</p>
       </section>
     </main>
     <script type="module" src="app.js"></script>

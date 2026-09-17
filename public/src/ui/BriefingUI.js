@@ -11,7 +11,7 @@ export class BriefingUI {
     this.onContinue = null;
     this.slides = [];
     this.index = 0;
-    this.finalLabel = 'CONTINUE';
+    this.finalLabel = 'TIẾP TỤC';
 
     this.titleEl = h('h2');
     this.subtitleEl = h('p', { class: 'briefing-subtitle' });
@@ -19,8 +19,8 @@ export class BriefingUI {
     this.headingEl = h('p', { class: 'slide-heading' });
     this.textEl = h('p', { class: 'slide-text' });
     this.dotsEl = h('div', { class: 'slide-dots' });
-    this.backBtn = h('button', { class: 'btn btn-small', type: 'button', text: 'BACK', onclick: () => this.back() });
-    this.nextBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'NEXT', onclick: () => this.next() });
+    this.backBtn = h('button', { class: 'btn btn-small', type: 'button', text: 'QUAY LẠI', onclick: () => this.back() });
+    this.nextBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'TIẾP', onclick: () => this.next() });
 
     this.el = screen(
       'modal-screen briefing-screen',
@@ -42,7 +42,7 @@ export class BriefingUI {
     return !this.el.hidden;
   }
 
-  show({ title, subtitle = '', slides = [], button = 'CONTINUE', onContinue }) {
+  show({ title, subtitle = '', slides = [], button = 'TIẾP TỤC', onContinue }) {
     this.titleEl.textContent = title;
     this.subtitleEl.textContent = subtitle;
     this.subtitleEl.hidden = !subtitle;
@@ -61,7 +61,7 @@ export class BriefingUI {
     this.headingEl.textContent = slide?.title ?? '';
     this.textEl.textContent = slide?.text ?? '';
     this.backBtn.disabled = this.index === 0;
-    this.nextBtn.textContent = last ? this.finalLabel : 'NEXT';
+    this.nextBtn.textContent = last ? this.finalLabel : 'TIẾP';
     this.dotsEl.replaceChildren(
       ...this.slides.map((_, i) => h('span', { class: `dot ${i === this.index ? 'on' : ''}` })),
     );

@@ -18,18 +18,18 @@ export class Menu {
       h(
         'div',
         { class: 'menu-title' },
-        h('h1', {}, h('span', { class: 'title-line' , text: "LET'S SHOOT" }), h('span', { class: 'title-line title-accent', text: 'THE DUCK' })),
-        h('p', { class: 'subtitle', text: 'FREEDOM. RIGHTS. AMMO. DUCKS.' }),
+        h('h1', {}, h('span', { class: 'title-line' , text: 'CÙNG BẮN' }), h('span', { class: 'title-line title-accent', text: 'VỊT NÀO!' })),
+        h('p', { class: 'subtitle', text: 'TỰ DO. QUYỀN. ĐẠN. VỊT.' }),
       ),
       h(
         'div',
         { class: 'menu-buttons' },
-        h('button', { class: 'btn btn-primary', type: 'button', text: 'PLAY', onclick: () => handlers.onPlay() }),
-        h('button', { class: 'btn', type: 'button', text: 'LEADERBOARD', onclick: () => handlers.onLeaderboard() }),
-        h('button', { class: 'btn', type: 'button', text: 'HOW TO PLAY', onclick: () => handlers.onHowTo() }),
+        h('button', { class: 'btn btn-primary', type: 'button', text: 'CHƠI', onclick: () => handlers.onPlay() }),
+        h('button', { class: 'btn', type: 'button', text: 'BẢNG XẾP HẠNG', onclick: () => handlers.onLeaderboard() }),
+        h('button', { class: 'btn', type: 'button', text: 'CÁCH CHƠI', onclick: () => handlers.onHowTo() }),
         muteButton(),
       ),
-      h('p', { class: 'footnote', text: 'A PARODY GAME. NO REAL DUCKS WERE HARMED.' }),
+      h('p', { class: 'footnote', text: 'GAME CHÂM BIẾM. KHÔNG CON VỊT THẬT NÀO BỊ HẠI.' }),
     );
 
     this.nameInput = h('input', {
@@ -38,11 +38,17 @@ export class Menu {
       maxlength: String(RULES.NICKNAME_MAX),
       autocomplete: 'off',
       spellcheck: 'false',
-      'aria-label': 'Nickname',
+      'aria-label': 'Tên người chơi',
       placeholder: 'DUCKMASTER',
     });
     this.nameInput.addEventListener('input', () => {
-      const cleaned = this.nameInput.value.toUpperCase().replace(/[^A-Z0-9 _-]/g, '');
+      // Vietnamese names are allowed as input: accents are dropped ("Thắng" -> "THANG").
+      const cleaned = this.nameInput.value
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[đĐ]/g, 'D')
+        .toUpperCase()
+        .replace(/[^A-Z0-9 _-]/g, '');
       if (cleaned !== this.nameInput.value) this.nameInput.value = cleaned;
       this.nameError.textContent = '';
     });
@@ -50,21 +56,21 @@ export class Menu {
     const form = h(
       'form',
       { class: 'panel name-panel', novalidate: true },
-      h('h2', { text: 'ENTER YOUR NAME' }),
+      h('h2', { text: 'NHẬP TÊN CỦA BẠN' }),
       this.nameInput,
       this.nameError,
       h(
         'div',
         { class: 'row' },
-        h('button', { class: 'btn', type: 'button', text: 'BACK', onclick: () => handlers.onBackToMenu() }),
-        h('button', { class: 'btn btn-primary', type: 'submit', text: 'START' }),
+        h('button', { class: 'btn', type: 'button', text: 'QUAY LẠI', onclick: () => handlers.onBackToMenu() }),
+        h('button', { class: 'btn btn-primary', type: 'submit', text: 'BẮT ĐẦU' }),
       ),
     );
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = sanitizeNickname(this.nameInput.value);
       if (!isValidNickname(name)) {
-        this.nameError.textContent = `${RULES.NICKNAME_MIN}-${RULES.NICKNAME_MAX} CHARACTERS: A-Z, 0-9, _ -`;
+        this.nameError.textContent = `TỪ ${RULES.NICKNAME_MIN} ĐẾN ${RULES.NICKNAME_MAX} KÝ TỰ: CHỮ KHÔNG DẤU, SỐ, _ -`;
         return;
       }
       handlers.onNameConfirmed(name);
@@ -76,13 +82,13 @@ export class Menu {
       h(
         'div',
         { class: 'panel' },
-        h('h2', { text: 'PAUSED' }),
+        h('h2', { text: 'TẠM DỪNG' }),
         h(
           'div',
           { class: 'menu-buttons' },
-          h('button', { class: 'btn btn-primary', type: 'button', text: 'RESUME', onclick: () => handlers.onResume() }),
+          h('button', { class: 'btn btn-primary', type: 'button', text: 'CHƠI TIẾP', onclick: () => handlers.onResume() }),
           muteButton(),
-          h('button', { class: 'btn', type: 'button', text: 'QUIT TO MENU', onclick: () => handlers.onQuit() }),
+          h('button', { class: 'btn', type: 'button', text: 'VỀ MENU', onclick: () => handlers.onQuit() }),
         ),
       ),
     );
@@ -91,7 +97,7 @@ export class Menu {
   }
 
   setMuted(muted) {
-    for (const btn of this.muteButtons) btn.textContent = muted ? 'UNMUTE' : 'MUTE';
+    for (const btn of this.muteButtons) btn.textContent = muted ? 'BẬT TIẾNG' : 'TẮT TIẾNG';
   }
 
   hideAll() {

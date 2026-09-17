@@ -7,7 +7,8 @@
   --blue: #5ee7ff;
   --green: #3ddc84;
   --white: #fff;
-  --font: 'Press Start 2P', 'Courier New', monospace;
+  --font: 'Bungee', 'Segoe UI', Arial, sans-serif;
+  --font-body: 'Chakra Petch', 'Segoe UI', Arial, sans-serif;
 }
 
 * {
@@ -577,4 +578,39 @@ h2 {
 .result-rank {
   font-size: 2cqw;
   color: var(--yellow);
+}
+
+/* ---------- Long Vietnamese text uses the readable body font ---------- */
+.q-text,
+.q-option .opt-text,
+.q-feedback,
+.q-rewards,
+.slide-text,
+.result-outcome,
+.lb-status,
+.lb-you,
+.footnote,
+.briefing-subtitle,
+.error {
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.q-text {
+  font-size: 2.3cqw;
+  line-height: 1.35;
+}
+
+.q-option .opt-text {
+  font-size: 1.6cqw;
+  line-height: 1.3;
+}
+
+.slide-text {
+  font-size: 1.6cqw;
+  line-height: 1.5;
+}
+
+.q-feedback {
+  font-size: 2cqw;
 }

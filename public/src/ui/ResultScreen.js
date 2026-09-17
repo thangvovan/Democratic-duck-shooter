@@ -1,10 +1,10 @@
 import { h, screen, formatScore } from './dom.js';
 
 const OUTCOMES = {
-  victory: 'PRESIDENT DUCK HAS BEEN DEFEATED!',
-  escaped: "TIME'S UP! THE PRESIDENT ESCAPED...",
-  arrested: "YOU'VE BEEN ARRESTED!",
-  shot: 'THE BODYGUARDS GOT YOU!',
+  victory: 'ĐÂY LÀ TỰ DO!',
+  escaped: 'HẾT GIỜ! TRÙM VẪN AN TOÀN...',
+  arrested: 'BẠN ĐÃ BỊ BẮT!',
+  shot: 'BẠN ĐÃ BỊ HẠ!',
 };
 
 export class ResultScreen {
@@ -20,7 +20,7 @@ export class ResultScreen {
       h(
         'div',
         { class: 'panel result-panel' },
-        h('h2', { text: 'FREEDOM REPORT' }),
+        h('h2', { text: 'BÁO CÁO TỰ DO' }),
         this.outcomeEl,
         this.statsEl,
         this.submitEl,
@@ -28,9 +28,9 @@ export class ResultScreen {
         h(
           'div',
           { class: 'row' },
-          h('button', { class: 'btn btn-primary', type: 'button', text: 'PLAY AGAIN', onclick: () => onPlayAgain() }),
-          h('button', { class: 'btn', type: 'button', text: 'LEADERBOARD', onclick: () => onLeaderboard() }),
-          h('button', { class: 'btn', type: 'button', text: 'MAIN MENU', onclick: () => onMenu() }),
+          h('button', { class: 'btn btn-primary', type: 'button', text: 'CHƠI LẠI', onclick: () => onPlayAgain() }),
+          h('button', { class: 'btn', type: 'button', text: 'BẢNG XẾP HẠNG', onclick: () => onLeaderboard() }),
+          h('button', { class: 'btn', type: 'button', text: 'MENU CHÍNH', onclick: () => onMenu() }),
         ),
       ),
     );
@@ -44,19 +44,19 @@ export class ResultScreen {
     this.outcomeEl.className = `result-outcome ${result.outcome === 'victory' ? 'good' : 'bad'}`;
 
     const rows = [
-      ['SCORE', formatScore(result.score)],
-      ['DUCKS SHOT', stats.ducksShot + stats.bodyguardsShot + (stats.presidentDefeated ? 1 : 0)],
-      ['BODYGUARDS', stats.bodyguardsShot],
-      ['QUESTIONS', stats.questions],
-      ['CORRECT', stats.correct],
-      ['WRONG', stats.wrong],
-      ['BULLETS FIRED', stats.bulletsFired],
-      ['BEST COMBO', `x${stats.bestStreak}`],
+      ['ĐIỂM', formatScore(result.score)],
+      ['VỊT ĐÃ BẮN', stats.ducksShot + stats.bodyguardsShot + (stats.presidentDefeated ? 1 : 0)],
+      ['VỆ SĨ', stats.bodyguardsShot],
+      ['CÂU HỎI', stats.questions],
+      ['ĐÚNG', stats.correct],
+      ['SAI', stats.wrong],
+      ['ĐẠN ĐÃ BẮN', stats.bulletsFired],
+      ['COMBO CAO NHẤT', `x${stats.bestStreak}`],
     ];
     this.statsEl.replaceChildren(
       ...rows.flatMap(([label, value]) => [h('dt', { text: label }), h('dd', { text: String(value) })]),
     );
-    this.submitEl.textContent = 'SUBMITTING SCORE...';
+    this.submitEl.textContent = 'ĐANG GỬI ĐIỂM...';
     this.submitEl.className = 'result-submit';
     this.rankEl.textContent = '';
     this.el.hidden = false;
@@ -72,12 +72,12 @@ export class ResultScreen {
 
   setSubmitted(runId, response) {
     if (runId !== this.runId) return;
-    this.submitEl.textContent = 'YOUR SCORE HAS BEEN SUBMITTED.';
+    this.submitEl.textContent = 'ĐÃ GỬI ĐIỂM CỦA BẠN.';
     this.submitEl.className = 'result-submit good';
     if (response.rank) {
       this.rankEl.textContent = response.isNewBest
-        ? `YOUR RANK: #${response.rank}`
-        : `YOUR RANK: #${response.rank} (BEST ${formatScore(response.best)})`;
+        ? `HẠNG CỦA BẠN: #${response.rank}`
+        : `HẠNG CỦA BẠN: #${response.rank} (KỶ LỤC ${formatScore(response.best)})`;
     }
   }
 

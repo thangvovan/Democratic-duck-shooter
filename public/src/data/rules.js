@@ -55,6 +55,7 @@ export function pointsFor(type, streak) {
 export function sanitizeNickname(raw) {
   if (typeof raw !== 'string') return '';
   return raw
+    .replace(/[đĐ]/g, 'D')
     .normalize('NFKD')
     .toUpperCase()
     .replace(/[^A-Z0-9 _-]/g, '')

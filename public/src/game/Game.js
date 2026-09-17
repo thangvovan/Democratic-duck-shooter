@@ -55,7 +55,7 @@ export class Game {
     this.menu = new Menu(uiRoot, {
       onPlay: () => this.changeState(STATES.PLAYER_NAME),
       onLeaderboard: () => this.openLeaderboard(STATES.MENU),
-      onHowTo: () => this.briefingUI.show({ title: 'HOW TO PLAY', slides: HOW_TO_PLAY, button: 'BACK' }),
+      onHowTo: () => this.briefingUI.show({ title: 'CÁCH CHƠI', slides: HOW_TO_PLAY, button: 'QUAY LẠI' }),
       onToggleMute: () => this.toggleMute(),
       onNameConfirmed: (name) => this.onNameConfirmed(name),
       onBackToMenu: () => this.changeState(STATES.MENU),
@@ -241,7 +241,7 @@ export class Game {
   async submitResult(result) {
     const token = await this.sessionPromise;
     if (!token) {
-      this.resultScreen.setError(result.runId, 'OFFLINE: SCORE NOT SUBMITTED.');
+      this.resultScreen.setError(result.runId, 'MẤT KẾT NỐI: CHƯA GỬI ĐƯỢC ĐIỂM.');
       return;
     }
     const { stats } = result;
@@ -263,7 +263,7 @@ export class Game {
       });
       this.resultScreen.setSubmitted(result.runId, response);
     } catch (err) {
-      const message = err.status === 429 ? 'TOO MANY SUBMISSIONS. TRY LATER.' : `SCORE NOT SUBMITTED: ${String(err.message).toUpperCase()}`;
+      const message = err.status === 429 ? 'GỬI QUÁ NHIỀU LẦN. HÃY THỬ LẠI SAU.' : `CHƯA GỬI ĐƯỢC ĐIỂM (MÃ ${err.status || 'MẠNG'})`;
       this.resultScreen.setError(result.runId, message);
       this.reportProgress(0, { done: true }); // drop the "playing" row anyway
     }

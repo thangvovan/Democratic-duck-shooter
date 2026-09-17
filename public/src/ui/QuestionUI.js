@@ -76,7 +76,7 @@ export class QuestionUI {
   showQuestion() {
     const { questions, subtitle } = this.opts;
     const q = questions[this.index];
-    this.progressEl.textContent = `${subtitle} · Q${this.index + 1}/${questions.length}`;
+    this.progressEl.textContent = `${subtitle} · CÂU ${this.index + 1}/${questions.length}`;
     this.textEl.textContent = q.question;
     this.buttons.forEach((btn, i) => {
       btn.label.textContent = q.options[i];
@@ -94,9 +94,9 @@ export class QuestionUI {
 
   renderRewards() {
     const r = this.opts.getRewards();
-    const items = [h('span', { class: 'reward reward-ammo', text: `YOUR BULLETS: ${r.ammo}` })];
+    const items = [h('span', { class: 'reward reward-ammo', text: `ĐẠN CỦA BẠN: ${r.ammo}` })];
     if (r.enemyAmmo != null) {
-      items.push(h('span', { class: 'reward reward-enemy', text: `${r.enemyLabel || 'ENEMY BULLETS'}: ${r.enemyAmmo}` }));
+      items.push(h('span', { class: 'reward reward-enemy', text: `${r.enemyLabel || 'ĐẠN ĐỊCH'}: ${r.enemyAmmo}` }));
     }
     this.rewardsEl.replaceChildren(...items);
   }
@@ -119,10 +119,10 @@ export class QuestionUI {
 
     this.feedbackEl.className = `q-feedback ${correct ? 'good' : 'bad'}`;
     if (correct) {
-      this.feedbackEl.textContent = 'CORRECT! +1 BULLET';
+      this.feedbackEl.textContent = 'ĐÚNG! +1 VIÊN ĐẠN';
       this.audio.play('correct');
     } else {
-      const head = index < 0 ? "TIME'S UP!" : 'WRONG!';
+      const head = index < 0 ? 'HẾT GIỜ!' : 'SAI!';
       this.feedbackEl.textContent = this.opts.wrongText ? `${head} ${this.opts.wrongText}` : head;
       this.audio.play('wrong');
     }
@@ -140,7 +140,7 @@ export class QuestionUI {
     const seconds = Math.ceil(this.opts.getStageTime?.() ?? 0);
     if (seconds === this.shownStageSecond) return;
     this.shownStageSecond = seconds;
-    this.stageTimeEl.textContent = `STAGE ${formatTime(seconds)}`;
+    this.stageTimeEl.textContent = `CÒN ${formatTime(seconds)}`;
     this.stageTimeEl.classList.toggle('bad', seconds <= 20);
   }
 

@@ -23,7 +23,7 @@ export class WaveStage extends BaseStage {
       title: this.cfg.label,
       subtitle: this.cfg.tagline,
       slides: this.cfg.briefing,
-      button: 'START STAGE',
+      button: 'VÀO MÀN',
       onContinue: () => this.startIntro(),
     });
   }
@@ -91,7 +91,7 @@ export class WaveStage extends BaseStage {
     const { questions: questionSystem, questionUI } = this.game;
     questionUI.start({
       title: this.cfg.label,
-      subtitle: `WAVE ${this.wave}`,
+      subtitle: `LƯỢT ${this.wave}`,
       questions: questionSystem.draw(this.cfg.pool, this.cfg.questionsPerWave),
       wrongText: this.cfg.wrongText,
       getRewards: () => this.getRewards(),
@@ -117,8 +117,8 @@ export class WaveStage extends BaseStage {
     this.phase = 'outro';
     this.timer = 0.6; // go back to the questions almost immediately
     if (this.cfg.ducksLeave !== false) for (const duck of this.ducks) if (duck.alive) duck.leave();
-    this.game.effects.showMessage(this.ammo === 0 ? 'OUT OF AMMO!' : 'WAVE OVER', {
-      sub: `HITS THIS WAVE: ${this.waveKills}`,
+    this.game.effects.showMessage(this.ammo === 0 ? 'HẾT ĐẠN!' : 'HẾT LƯỢT', {
+      sub: `TRÚNG LƯỢT NÀY: ${this.waveKills}`,
       color: '#5ee7ff',
       duration: 0.8,
     });
@@ -171,7 +171,7 @@ export class WaveStage extends BaseStage {
     return false;
   }
   onTimeUp() {
-    this.game.effects.showMessage("TIME'S UP!", { sub: 'STAGE OVER', color: '#ff5a5a', duration: 2.2 });
+    this.game.effects.showMessage('HẾT GIỜ!', { sub: 'KẾT THÚC MÀN', color: '#ff5a5a', duration: 2.2 });
     this.game.audio.play('wrong');
   }
   onStageFinished() {

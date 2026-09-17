@@ -198,7 +198,7 @@ export class PresidentDuck {
     }
 
     if (this.state === 'running') {
-      drawText(ctx, 'PRESIDENT DUCK', this.x, this.y - this.size * 1.05, { size: 9, color: '#ffd23f' });
+      drawText(ctx, 'VỊT TỔNG THỐNG', this.x, this.y - this.size * 1.05, { size: 9, color: '#ffd23f' });
     }
   }
 
@@ -216,6 +216,6 @@ export class PresidentDuck {
     ctx.globalAlpha = 0.8;
     ctx.stroke();
     ctx.restore();
-    drawText(ctx, 'SHIELD', PODIUM.x, 244, { size: 10, color: '#5ee7ff' });
+    drawText(ctx, 'KHIÊN', PODIUM.x, 244, { size: 10, color: '#5ee7ff' });
   }
 }

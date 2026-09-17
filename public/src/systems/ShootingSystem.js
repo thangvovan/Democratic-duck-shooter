@@ -55,7 +55,7 @@ export class ShootingSystem {
     if (!stage.hasAmmo()) {
       game.audio.play('empty');
       if (this.noAmmoCooldown <= 0) {
-        game.effects.addPopup(x, y, 'NO AMMO!', { color: '#ff5a5a', size: 14, life: 0.8 });
+        game.effects.addPopup(x, y, 'HẾT ĐẠN!', { color: '#ff5a5a', size: 14, life: 0.8 });
         this.noAmmoCooldown = 0.5;
       }
       return;
@@ -78,7 +78,7 @@ export class ShootingSystem {
       audio.play('hit');
     } else if (!result.neutral) {
       if (stage.countsStats) game.score.registerMiss();
-      effects.addPopup(x, y, 'MISS', { color: '#ffffff', size: 12, life: 0.6 });
+      effects.addPopup(x, y, 'TRƯỢT', { color: '#ffffff', size: 12, life: 0.6 });
     }
   }
 

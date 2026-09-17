@@ -1,7 +1,9 @@
 export const W = 960;
 export const H = 540;
 export const GROUND_Y = 430;
-export const FONT = '"Press Start 2P", "Courier New", monospace';
+// Both fonts ship a Vietnamese subset (Press Start 2P does not).
+export const FONT = '"Bungee", "Segoe UI", Arial, sans-serif';
+export const FONT_BODY = '"Chakra Petch", "Segoe UI", Arial, sans-serif';
 
 export function drawText(ctx, text, x, y, opts = {}) {
   const {

@@ -13,14 +13,14 @@ const DUCK_PALETTES = [PALETTES.yellow, PALETTES.white, PALETTES.mallard, PALETT
 export class Stage1 extends WaveStage {
   constructor(game) {
     super(game, {
-      label: 'STAGE 1 — SCHOOL',
-      tagline: 'SHOOT THE DUCKS',
+      label: 'MÀN 1 — TRƯỜNG HỌC',
+      tagline: 'BẮN VỊT CON',
       background: 'school',
       pool: 'school',
       questionsPerWave: RULES.QUESTIONS_PER_WAVE[1],
       questionState: STATES.STAGE_1_QUESTIONS,
       shootingState: STATES.STAGE_1_SHOOTING,
-      wrongText: 'NO BULLET',
+      wrongText: 'KHÔNG CÓ ĐẠN',
       briefing: STAGE_SLIDES[1],
     });
     this.spawnTimer = 0;
@@ -31,7 +31,7 @@ export class Stage1 extends WaveStage {
     if (this.ammo === 0) {
       audio.play('wrong');
     } else {
-      effects.showMessage('SHOOT!', { sub: `${this.ammo} BULLET${this.ammo > 1 ? 'S' : ''}`, duration: 1.1 });
+      effects.showMessage('BẮN!', { sub: `${this.ammo} VIÊN ĐẠN`, duration: 1.1 });
     }
     for (let i = 0; i < 4; i++) this.spawnDuck();
     this.spawnTimer = 0.5;

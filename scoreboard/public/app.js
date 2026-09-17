@@ -11,7 +11,7 @@ const format = (n) => n.toLocaleString('en-US');
 function badge(stage) {
   const el = document.createElement('span');
   el.className = 'badge';
-  el.textContent = stage ? `PLAYING · STAGE ${stage}` : 'PLAYING';
+  el.textContent = stage ? `ĐANG CHƠI · MÀN ${stage}` : 'ĐANG CHƠI';
   return el;
 }
 
@@ -124,16 +124,16 @@ function setStatus(state, text) {
 let source;
 function connect() {
   source = new EventSource('/events');
-  source.onopen = () => setStatus('live', 'LIVE');
+  source.onopen = () => setStatus('live', 'TRỰC TIẾP');
   source.onmessage = (event) => {
-    setStatus('live', 'LIVE');
+    setStatus('live', 'TRỰC TIẾP');
     try {
       render(JSON.parse(event.data));
     } catch (err) {
       console.error('bad payload', err);
     }
   };
-  source.onerror = () => setStatus('offline', 'RECONNECTING…');
+  source.onerror = () => setStatus('offline', 'ĐANG KẾT NỐI LẠI…');
 }
 
 connect();
